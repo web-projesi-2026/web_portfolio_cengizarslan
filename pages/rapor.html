@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="NEXUS Web Projesi Yönetimi — Haftalık Öğrenci Rapor Formu"/>
+  <meta name="keywords" content="web projesi, rapor, haftalık rapor, öğrenci"/>
+  <title>Haftalık Rapor — NEXUS</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<style>
+/* =============================================
+   NEXUS — Base Variables & Reset
+   ============================================= */
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap');
+
+:root {
+  --bg: #060810;
+  --bg-card: #0d1117;
+  --bg-card-2: #111827;
+  --accent: #00d4ff;
+  --accent-2: #7c3aed;
+  --accent-glow: rgba(0, 212, 255, 0.15);
+  --text: #f0f4f8;
+  --text-muted: #8892a4;
+  --border: rgba(255,255,255,0.07);
+  --border-accent: rgba(0, 212, 255, 0.25);
+  --radius: 16px;
+  --radius-lg: 24px;
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  --shadow-glow: 0 0 40px rgba(0, 212, 255, 0.12);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+a { text-decoration: none; color: inherit; }
+ul { list-style: none; }
+img { max-width: 100%; display: block; }
+button { cursor: pointer; font-family: var(--font-body); border: none; outline: none; }
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border-accent); border-radius: 3px; }
+
+/* =============================================
+   NAVBAR
+   ============================================= */
+.navbar {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 1000;
+  padding: 1.2rem 5%;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  background: rgba(6, 8, 16, 0.85);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 1px 0 var(--border);
+  transition: background var(--transition), box-shadow var(--transition);
+}
+
+.navbar.scrolled {
+  background: rgba(6, 8, 16, 0.95);
+}
+
+.logo {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+.logo span { color: var(--accent); }
+
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  margin-left: auto;
+}
+
+.nav-links a {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  position: relative;
+  transition: color var(--transition);
+  padding-bottom: 2px;
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute; bottom: -2px; left: 0;
+  width: 0; height: 1.5px;
+  background: var(--accent);
+  transition: width var(--transition);
+}
+
+.nav-links a:hover,
+.nav-links a.active { color: var(--text); }
+.nav-links a:hover::after,
+.nav-links a.active::after { width: 100%; }
+
+.nav-cta {
+  background: var(--accent);
+  color: var(--bg);
+  padding: 0.55rem 1.4rem;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  font-family: var(--font-display);
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+
+.nav-cta:hover {
+  background: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(0,212,255,0.3);
+}
+
+.burger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  margin-left: auto;
+  background: none;
+  padding: 4px;
+}
+
+.burger span {
+  display: block;
+  width: 24px; height: 2px;
+  background: var(--text);
+  border-radius: 2px;
+  transition: var(--transition);
+}
+
+/* Mobile Menu */
+.mobile-menu {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(6, 8, 16, 0.97);
+  backdrop-filter: blur(20px);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateX(100%);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mobile-menu.open { transform: translateX(0); }
+
+.mobile-menu ul {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  text-align: center;
+}
+
+.mobile-menu a {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  transition: color var(--transition);
+}
+
+.mobile-menu a:hover { color: var(--accent); }
+
+/* =============================================
+   PAGE HERO
+   ============================================= */
+.page-hero {
+  padding: 8rem 5% 4rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.page-hero-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  animation: orbFloat 8s ease-in-out infinite;
+}
+
+.orb-1 {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(0,212,255,0.08), transparent 70%);
+  top: -100px; left: -100px;
+}
+
+.orb-2 {
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(124,58,237,0.08), transparent 70%);
+  bottom: -50px; right: 10%;
+  animation-delay: 3s;
+}
+
+.grid-overlay {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+@keyframes orbFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(20px, -20px) scale(1.05); }
+  66% { transform: translate(-15px, 15px) scale(0.95); }
+}
+
+.page-hero-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 700px;
+}
+
+.section-tag {
+  display: inline-block;
+  background: rgba(0,212,255,0.1);
+  border: 1px solid var(--border-accent);
+  color: var(--accent);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 0.4rem 1rem;
+  border-radius: 50px;
+  margin-bottom: 1.5rem;
+}
+
+.page-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  margin-bottom: 1rem;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--accent), #a78bfa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.page-sub {
+  font-size: 1.05rem;
+  color: var(--text-muted);
+  line-height: 1.7;
+  max-width: 560px;
+}
+
+/* =============================================
+   REPORT SECTION
+   ============================================= */
+.report-section {
+  padding: 3rem 5% 6rem;
+}
+
+.report-wrapper {
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+/* Week Selector */
+.week-selector {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 2.5rem;
+}
+
+.week-btn {
+  padding: 0.5rem 1.2rem;
+  border-radius: 50px;
+  border: 1.5px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.week-btn:hover {
+  border-color: var(--border-accent);
+  color: var(--text);
+}
+
+.week-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg);
+}
+
+/* Report Card */
+.report-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.report-card-header {
+  padding: 2rem 2.5rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.report-card-header h2 {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.report-date-badge {
+  background: rgba(0,212,255,0.08);
+  border: 1px solid var(--border-accent);
+  color: var(--accent);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.35rem 0.9rem;
+  border-radius: 50px;
+  font-family: var(--font-display);
+}
+
+.report-body {
+  padding: 2.5rem;
+}
+
+/* Form Groups */
+.form-group {
+  margin-bottom: 1.75rem;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 0.6rem;
+}
+
+.form-label span {
+  color: var(--accent);
+  margin-left: 2px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  background: var(--bg-card-2);
+  border: 1.5px solid var(--border);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  padding: 0.85rem 1.1rem;
+  border-radius: var(--radius);
+  transition: border-color var(--transition), box-shadow var(--transition);
+  outline: none;
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder { color: var(--text-muted); opacity: 0.7; }
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  border-color: var(--border-accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.form-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238892a4' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 2.5rem;
+  cursor: pointer;
+}
+
+.form-select option { background: var(--bg-card); }
+
+.form-textarea {
+  resize: vertical;
+  min-height: 100px;
+  line-height: 1.6;
+}
+
+/* Divider */
+.form-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 2rem 0;
+}
+
+.form-section-title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.form-section-title::before {
+  content: '';
+  display: inline-block;
+  width: 16px; height: 2px;
+  background: var(--accent);
+  border-radius: 2px;
+}
+
+/* Checklist */
+.checklist {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.check-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--bg-card-2);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all var(--transition);
+  user-select: none;
+}
+
+.check-item:hover {
+  border-color: var(--border-accent);
+}
+
+.check-item input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px; height: 18px;
+  border: 1.5px solid var(--border-accent);
+  border-radius: 5px;
+  background: transparent;
+  cursor: pointer;
+  flex-shrink: 0;
+  position: relative;
+  transition: all var(--transition);
+}
+
+.check-item input[type="checkbox"]:checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.check-item input[type="checkbox"]:checked::after {
+  content: '✓';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 11px;
+  color: var(--bg);
+  font-weight: 700;
+}
+
+.check-item input[type="checkbox"]:checked ~ .check-label {
+  color: var(--text);
+}
+
+.check-label {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  transition: color var(--transition);
+}
+
+/* Progress Slider */
+.slider-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.slider-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.slider-value {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--bg-card-2);
+  outline: none;
+  cursor: pointer;
+  border: 1px solid var(--border);
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--bg);
+  box-shadow: 0 0 12px rgba(0,212,255,0.4);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.slider-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* Star Rating */
+.rating-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.star {
+  font-size: 1.6rem;
+  cursor: pointer;
+  color: var(--border);
+  transition: color 0.15s, transform 0.15s;
+  line-height: 1;
+}
+
+.star:hover,
+.star.selected { color: #fbbf24; }
+.star:hover { transform: scale(1.15); }
+
+/* Submit Area */
+.submit-area {
+  padding: 2rem 2.5rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.submit-note {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.submit-note::before {
+  content: '📌';
+}
+
+.btn-submit {
+  background: var(--accent);
+  color: var(--bg);
+  padding: 0.9rem 2.2rem;
+  border-radius: 10px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: none;
+}
+
+.btn-submit:hover {
+  background: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(0,212,255,0.3);
+}
+
+.btn-submit svg {
+  width: 18px; height: 18px;
+}
+
+/* Success State */
+.success-msg {
+  display: none;
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.success-msg.show { display: block; }
+
+.success-icon {
+  width: 70px; height: 70px;
+  background: rgba(0,212,255,0.1);
+  border: 2px solid var(--border-accent);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  font-size: 2rem;
+}
+
+.success-msg h3 {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+
+.success-msg p {
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.btn-ghost {
+  background: transparent;
+  border: 1.5px solid var(--border-accent);
+  color: var(--text);
+  padding: 0.7rem 1.8rem;
+  border-radius: 10px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.btn-ghost:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-glow);
+}
+
+/* Past Reports */
+.past-reports {
+  margin-top: 3rem;
+}
+
+.past-title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+  color: var(--text-muted);
+}
+
+.past-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.past-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: border-color var(--transition);
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.past-item:hover { border-color: var(--border-accent); }
+
+.past-item-left { display: flex; align-items: center; gap: 1rem; }
+
+.past-week-num {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--accent);
+  background: rgba(0,212,255,0.1);
+  border: 1px solid var(--border-accent);
+  padding: 0.2rem 0.6rem;
+  border-radius: 50px;
+}
+
+.past-item-title {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.past-item-date {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.past-status {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.75rem;
+  border-radius: 50px;
+}
+
+.past-status.done {
+  background: rgba(0,212,255,0.1);
+  color: var(--accent);
+  border: 1px solid var(--border-accent);
+}
+
+/* =============================================
+   FOOTER
+   ============================================= */
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 2rem 5%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.footer-logo {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.footer-logo span { color: var(--accent); }
+
+.footer-copy {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* =============================================
+   RESPONSIVE — Media Queries
+   ============================================= */
+@media (max-width: 768px) {
+  .nav-links, .nav-cta { display: none; }
+  .burger { display: flex; }
+
+  .report-card-header {
+    padding: 1.5rem;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .report-body { padding: 1.5rem; }
+
+  .form-row { grid-template-columns: 1fr; }
+
+  .checklist { grid-template-columns: 1fr; }
+
+  .submit-area {
+    padding: 1.5rem;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-submit { justify-content: center; }
+
+  .page-hero { padding: 7rem 5% 3rem; }
+
+  .mobile-menu a { font-size: 2rem; }
+}
+
+@media (max-width: 480px) {
+  .week-btn { font-size: 0.78rem; padding: 0.45rem 1rem; }
+  .past-item-left { flex-direction: column; align-items: flex-start; gap: 0.4rem; }
+  .footer { flex-direction: column; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+  <a href="index.html" class="logo">NEX<span>US</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Ana Sayfa</a></li>
+    <li><a href="products.html">Ürünler</a></li>
+    <li><a href="about.html">Hakkımızda</a></li>
+    <li><a href="contact.html">İletişim</a></li>
+    <li><a href="rapor.html" class="active">Rapor</a></li>
+  </ul>
+  <button class="nav-cta" onclick="window.location='products.html'">Alışveriş Yap</button>
+  <button class="burger" id="burger" aria-label="Menüyü Aç/Kapat">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobile-menu">
+  <ul>
+    <li><a href="index.html">Ana Sayfa</a></li>
+    <li><a href="products.html">Ürünler</a></li>
+    <li><a href="about.html">Hakkımızda</a></li>
+    <li><a href="contact.html">İletişim</a></li>
+    <li><a href="rapor.html">Rapor</a></li>
+  </ul>
+</div>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="page-hero-bg">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="grid-overlay"></div>
+  </div>
+  <div class="page-hero-inner">
+    <div class="section-tag">Web Projesi Yönetimi</div>
+    <h1 class="page-title">Haftalık <span class="gradient-text">Rapor</span> Formu</h1>
+    <p class="page-sub">Her hafta yapılan görevleri, tamamlanan adımları ve karşılaşılan zorlukları bu form aracılığıyla raporlayın.</p>
+  </div>
+</section>
+
+<!-- REPORT SECTION -->
+<section class="report-section">
+  <div class="report-wrapper">
+
+    <!-- Week Selector -->
+    <div class="week-selector" id="week-selector">
+      <button class="week-btn active" data-week="1">Hafta 1</button>
+      <button class="week-btn" data-week="2">Hafta 2</button>
+      <button class="week-btn" data-week="3">Hafta 3</button>
+      <button class="week-btn" data-week="4">Hafta 4</button>
+      <button class="week-btn" data-week="5">Hafta 5</button>
+      <button class="week-btn" data-week="6">Hafta 6</button>
+      <button class="week-btn" data-week="7">Hafta 7</button>
+      <button class="week-btn" data-week="8">Hafta 8</button>
+    </div>
+
+    <!-- Report Card -->
+    <div class="report-card">
+      <div class="report-card-header">
+        <h2 id="report-week-title">Hafta 1 — 13 Nisan 2025</h2>
+        <span class="report-date-badge" id="report-date-badge">13 Nisan 2025</span>
+      </div>
+
+      <!-- Form -->
+      <div id="report-form-wrap">
+        <div class="report-body">
+
+          <!-- Öğrenci Bilgileri -->
+          <div class="form-section-title">Öğrenci Bilgileri</div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="student-name">Ad Soyad <span>*</span></label>
+              <input class="form-input" id="student-name" type="text" placeholder="Adınız ve soyadınız"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="student-no">Öğrenci No <span>*</span></label>
+              <input class="form-input" id="student-no" type="text" placeholder="Öğrenci numaranız"/>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="student-email">E-posta</label>
+              <input class="form-input" id="student-email" type="email" placeholder="okul@eposta.com"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="report-week-sel">Rapor Haftası <span>*</span></label>
+              <select class="form-select" id="report-week-sel">
+                <option value="">Hafta seçin…</option>
+                <option value="1" selected>Hafta 1 — 13 Nisan</option>
+                <option value="2">Hafta 2 — 20 Nisan</option>
+                <option value="3">Hafta 3 — 27 Nisan</option>
+                <option value="4">Hafta 4 — 4 Mayıs</option>
+                <option value="5">Hafta 5 — 11 Mayıs</option>
+                <option value="6">Hafta 6 — 18 Mayıs</option>
+                <option value="7">Hafta 7 — 25 Mayıs</option>
+                <option value="8">Hafta 8 — 1 Haziran</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-divider"></div>
+
+          <!-- Bu Hafta Yapılan Görevler -->
+          <div class="form-section-title">Bu Hafta Yapılan Görevler</div>
+
+          <div class="form-group">
+            <label class="form-label">Tamamlanan Görevler (işaretleyin) <span>*</span></label>
+            <div class="checklist">
+              <label class="check-item">
+                <input type="checkbox" id="task-multipage"/>
+                <span class="check-label">Birden fazla .html sayfası oluşturuldu</span>
+              </label>
+              <label class="check-item">
+                <input type="checkbox" id="task-responsive"/>
+                <span class="check-label">Responsive tasarım eklendi</span>
+              </label>
+              <label class="check-item">
+                <input type="checkbox" id="task-mediaq"/>
+                <span class="check-label">Media query kullanımı sağlandı</span>
+              </label>
+              <label class="check-item">
+                <input type="checkbox" id="task-mobile"/>
+                <span class="check-label">Mobil düzen düzenlendi</span>
+              </label>
+              <label class="check-item">
+                <input type="checkbox" id="task-images"/>
+                <span class="check-label">Görseller mobilde taşmıyor</span>
+              </label>
+              <label class="check-item">
+                <input type="checkbox" id="task-hamburger"/>
+                <span class="check-label">Hamburger menü eklendi</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-divider"></div>
+
+          <!-- Haftalık Özet -->
+          <div class="form-section-title">Haftalık Özet</div>
+
+          <div class="form-group">
+            <label class="form-label" for="summary">Bu Hafta Neler Yaptınız? <span>*</span></label>
+            <textarea class="form-textarea" id="summary" rows="4" placeholder="Bu haftaki çalışmalarınızı kısaca özetleyin…" style="min-height: 120px;"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="learned">Ne Öğrendiniz?</label>
+            <textarea class="form-textarea" id="learned" rows="3" placeholder="Bu haftaki öğrenmelerinizi yazın…"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="problems">Karşılaşılan Sorunlar</label>
+            <textarea class="form-textarea" id="problems" rows="3" placeholder="Zorluk yaşadığınız konuları belirtin…"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="next-plan">Gelecek Hafta Planı</label>
+            <textarea class="form-textarea" id="next-plan" rows="3" placeholder="Bir sonraki hafta ne üzerinde çalışmayı planlıyorsunuz?"></textarea>
+          </div>
+
+          <div class="form-divider"></div>
+
+          <!-- İlerleme -->
+          <div class="form-section-title">İlerleme Değerlendirmesi</div>
+
+          <div class="form-group">
+            <div class="slider-group">
+              <div class="slider-header">
+                <label class="form-label" style="margin:0" for="progress-slider">Proje Tamamlanma Oranı</label>
+                <span class="slider-value" id="progress-val">%0</span>
+              </div>
+              <input type="range" id="progress-slider" min="0" max="100" step="5" value="0"/>
+              <div class="slider-labels"><span>Başlamadı</span><span>Yarı yolda</span><span>Tamamlandı</span></div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Hafta Genel Değerlendirmesi</label>
+            <div class="rating-row" id="star-rating">
+              <span class="star" data-val="1">★</span>
+              <span class="star" data-val="2">★</span>
+              <span class="star" data-val="3">★</span>
+              <span class="star" data-val="4">★</span>
+              <span class="star" data-val="5">★</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="extra-notes">Ek Notlar / Öneriler</label>
+            <textarea class="form-textarea" id="extra-notes" rows="3" placeholder="Eklemek istediğiniz herhangi bir not…"></textarea>
+          </div>
+
+        </div><!-- /.report-body -->
+
+        <div class="submit-area">
+          <p class="submit-note">Raporunuz kaydedilecek ve hoca tarafından incelenecektir.</p>
+          <button class="btn-submit" id="submit-btn" onclick="submitReport()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg>
+            Raporu Gönder
+          </button>
+        </div>
+      </div><!-- /#report-form-wrap -->
+
+      <!-- Success -->
+      <div class="success-msg" id="success-msg">
+        <div class="success-icon">✓</div>
+        <h3>Rapor Başarıyla Gönderildi!</h3>
+        <p>Haftalık raporunuz kaydedildi. Bir sonraki hafta yeni rapor doldurabilirsiniz.</p>
+        <button class="btn-ghost" onclick="resetReport()">
+          ↺ Yeni Rapor Doldur
+        </button>
+      </div>
+
+    </div><!-- /.report-card -->
+
+    <!-- Past Reports -->
+    <div class="past-reports">
+      <p class="past-title">Önceki Raporlar</p>
+      <div class="past-list" id="past-list">
+        <!-- dinamik ekleniyor -->
+        <div class="past-item">
+          <div class="past-item-left">
+            <span class="past-week-num">H1</span>
+            <div>
+              <p class="past-item-title">Hafta 1 — Çoklu Sayfa & Responsive Tasarım</p>
+              <p class="past-item-date">13 Nisan 2025</p>
+            </div>
+          </div>
+          <span class="past-status done">Gönderildi</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /.report-wrapper -->
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-logo">NEX<span>US</span></div>
+  <p class="footer-copy">© 2025 NEXUS Premium Phones — Web Projesi Yönetimi</p>
+</footer>
+
+<script>
+/* ─── NAVBAR SCROLL ─── */
+(function () {
+  const navbar = document.getElementById('navbar');
+  if (!navbar) return;
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 50);
+  }, { passive: true });
+})();
+
+/* ─── MOBILE MENU ─── */
+(function () {
+  const burger = document.getElementById('burger');
+  const mobileMenu = document.getElementById('mobile-menu');
+  if (!burger || !mobileMenu) return;
+  let open = false;
+  burger.addEventListener('click', () => {
+    open = !open;
+    mobileMenu.classList.toggle('open', open);
+    const spans = burger.querySelectorAll('span');
+    if (open) {
+      spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+      spans[1].style.opacity = '0';
+      spans[2].style.transform = 'rotate(-45deg) translate(5px, -5px)';
+    } else {
+      spans[0].style.transform = '';
+      spans[1].style.opacity = '';
+      spans[2].style.transform = '';
+    }
+  });
+  mobileMenu.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      open = false;
+      mobileMenu.classList.remove('open');
+      const spans = burger.querySelectorAll('span');
+      spans[0].style.transform = '';
+      spans[1].style.opacity = '';
+      spans[2].style.transform = '';
+    });
+  });
+})();
+
+/* ─── WEEK BUTTONS ─── */
+const weekDates = {
+  1: '13 Nisan 2025', 2: '20 Nisan 2025', 3: '27 Nisan 2025', 4: '4 Mayıs 2025',
+  5: '11 Mayıs 2025', 6: '18 Mayıs 2025', 7: '25 Mayıs 2025', 8: '1 Haziran 2025'
+};
+
+document.querySelectorAll('.week-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.week-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const w = btn.dataset.week;
+    const date = weekDates[w];
+    document.getElementById('report-week-title').textContent = `Hafta ${w} — ${date}`;
+    document.getElementById('report-date-badge').textContent = date;
+    const sel = document.getElementById('report-week-sel');
+    if (sel) sel.value = w;
+  });
+});
+
+/* ─── PROGRESS SLIDER ─── */
+const slider = document.getElementById('progress-slider');
+const progressVal = document.getElementById('progress-val');
+if (slider && progressVal) {
+  slider.addEventListener('input', () => {
+    progressVal.textContent = '%' + slider.value;
+    const pct = slider.value / 100;
+    slider.style.background = `linear-gradient(to right, var(--accent) ${pct * 100}%, var(--bg-card-2) ${pct * 100}%)`;
+  });
+}
+
+/* ─── STAR RATING ─── */
+let selectedRating = 0;
+document.querySelectorAll('.star').forEach(star => {
+  star.addEventListener('click', () => {
+    selectedRating = parseInt(star.dataset.val);
+    document.querySelectorAll('.star').forEach((s, i) => {
+      s.classList.toggle('selected', i < selectedRating);
+    });
+  });
+  star.addEventListener('mouseenter', () => {
+    const val = parseInt(star.dataset.val);
+    document.querySelectorAll('.star').forEach((s, i) => {
+      s.style.color = i < val ? '#fbbf24' : '';
+    });
+  });
+  star.addEventListener('mouseleave', () => {
+    document.querySelectorAll('.star').forEach((s, i) => {
+      s.style.color = i < selectedRating ? '#fbbf24' : '';
+    });
+  });
+});
+
+/* ─── SUBMIT ─── */
+function submitReport() {
+  const name = document.getElementById('student-name').value.trim();
+  const no = document.getElementById('student-no').value.trim();
+  const summary = document.getElementById('summary').value.trim();
+  const weekSel = document.getElementById('report-week-sel').value;
+
+  if (!name || !no || !summary || !weekSel) {
+    alert('Lütfen zorunlu alanları doldurun: Ad Soyad, Öğrenci No, Hafta ve Özet.');
+    return;
+  }
+
+  const btn = document.getElementById('submit-btn');
+  btn.textContent = 'Gönderiliyor…';
+  btn.style.opacity = '0.7';
+  btn.disabled = true;
+
+  setTimeout(() => {
+    document.getElementById('report-form-wrap').style.display = 'none';
+    document.getElementById('success-msg').classList.add('show');
+
+    // Add to past list
+    const list = document.getElementById('past-list');
+    const activeWeek = document.querySelector('.week-btn.active')?.dataset.week || '?';
+    const date = weekDates[activeWeek] || '';
+    const item = document.createElement('div');
+    item.className = 'past-item';
+    item.innerHTML = `
+      <div class="past-item-left">
+        <span class="past-week-num">H${activeWeek}</span>
+        <div>
+          <p class="past-item-title">Hafta ${activeWeek} — ${name}</p>
+          <p class="past-item-date">${date}</p>
+        </div>
+      </div>
+      <span class="past-status done">Gönderildi</span>`;
+    list.appendChild(item);
+  }, 1200);
+}
+
+function resetReport() {
+  document.getElementById('report-form-wrap').style.display = '';
+  document.getElementById('success-msg').classList.remove('show');
+  document.getElementById('submit-btn').textContent = '  Raporu Gönder';
+  document.getElementById('submit-btn').style.opacity = '';
+  document.getElementById('submit-btn').disabled = false;
+
+  // reset fields
+  ['student-name','student-no','student-email','summary','learned','problems','next-plan','extra-notes'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('report-week-sel').value = '';
+  document.getElementById('progress-slider').value = 0;
+  document.getElementById('progress-val').textContent = '%0';
+  selectedRating = 0;
+  document.querySelectorAll('.star').forEach(s => { s.classList.remove('selected'); s.style.color = ''; });
+  document.querySelectorAll('.check-item input').forEach(cb => cb.checked = false);
+}
+</script>
+</body>
+</html>
