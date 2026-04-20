@@ -655,7 +655,9 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       document.body.style.transition = 'opacity 0.3s ease';
       document.body.style.opacity    = '0';
-      setTimeout(() => { window.location.href = href; }, 300);
+      // link.href = tarayici tarafindan absolute URL'e cevrilen deger
+      const absoluteHref = link.href;
+      setTimeout(() => { window.location.href = absoluteHref; }, 300);
     });
   });
 })();
