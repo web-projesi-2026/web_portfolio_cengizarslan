@@ -1,12 +1,31 @@
 /* =============================================
    NEXUS — Premium Phone Store
    Main JavaScript
+   ─────────────────────────────────────────────
+   Etkileşimler:
+   1.  Özel İmleç (Custom Cursor)
+   2.  Navbar Scroll Efekti
+   3.  Mobil Menü (Açılır/Kapanır) ★
+   4.  Scroll Reveal Animasyonu
+   5.  Sayaç / İstatistik Animasyonu ★
+   6.  Newsletter Formu
+   7.  Ürün Filtresi (Products Sayfası)
+   8.  Sepete Ekle (Toast Bildirimi)
+   9.  Çok Adımlı İletişim Formu
+   10. Parallax Hero Orb'ları
+   11. Kart Hover Tilt Efekti
+   12. Dark Mode Toggle ★
+   13. Slider (Müşteri Yorumları) ★
+   14. Sekmeli İçerik (Tabs) ★
+   15. Modal Pencere ★
+   16. Yukarı Çık Butonu ★
+   17. Rapor Formu
    ============================================= */
 
 'use strict';
 
 /* ─────────────────────────────────────────────
-   CUSTOM CURSOR
+   1. ÖZEL İMLEÇ
 ───────────────────────────────────────────── */
 (function initCursor() {
   const cursor = document.getElementById('cursor');
@@ -20,77 +39,72 @@
     mouseX = e.clientX;
     mouseY = e.clientY;
     cursor.style.left = mouseX + 'px';
-    cursor.style.top = mouseY + 'px';
+    cursor.style.top  = mouseY + 'px';
   });
 
   function animateFollower() {
     followerX += (mouseX - followerX) * 0.12;
     followerY += (mouseY - followerY) * 0.12;
     follower.style.left = followerX + 'px';
-    follower.style.top = followerY + 'px';
+    follower.style.top  = followerY + 'px';
     requestAnimationFrame(animateFollower);
   }
   animateFollower();
 })();
 
 /* ─────────────────────────────────────────────
-   NAVBAR SCROLL
+   2. NAVBAR SCROLL
 ───────────────────────────────────────────── */
 (function initNavbar() {
   const navbar = document.getElementById('navbar');
   if (!navbar) return;
 
   window.addEventListener('scroll', () => {
-    if (window.scrollY > 50) {
-      navbar.classList.add('scrolled');
-    } else {
-      navbar.classList.remove('scrolled');
-    }
+    navbar.classList.toggle('scrolled', window.scrollY > 50);
   }, { passive: true });
 })();
 
 /* ─────────────────────────────────────────────
-   MOBILE MENU
+   3. MOBİL MENÜ (Açılır/Kapanır) ★
 ───────────────────────────────────────────── */
 (function initMobileMenu() {
-  const burger = document.getElementById('burger');
+  const burger     = document.getElementById('burger');
   const mobileMenu = document.getElementById('mobile-menu');
   if (!burger || !mobileMenu) return;
 
   let open = false;
 
-  burger.addEventListener('click', () => {
-    open = !open;
+  function setMenu(state) {
+    open = state;
     mobileMenu.classList.toggle('open', open);
-
-    // Animate burger
     const spans = burger.querySelectorAll('span');
     if (open) {
       spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
-      spans[1].style.opacity = '0';
+      spans[1].style.opacity   = '0';
       spans[2].style.transform = 'rotate(-45deg) translate(5px, -5px)';
+      document.body.style.overflow = 'hidden';
     } else {
       spans[0].style.transform = '';
-      spans[1].style.opacity = '';
+      spans[1].style.opacity   = '';
       spans[2].style.transform = '';
+      document.body.style.overflow = '';
     }
-  });
+  }
 
-  // Close on link click
-  mobileMenu.querySelectorAll('a').forEach(link => {
-    link.addEventListener('click', () => {
-      open = false;
-      mobileMenu.classList.remove('open');
-      const spans = burger.querySelectorAll('span');
-      spans[0].style.transform = '';
-      spans[1].style.opacity = '';
-      spans[2].style.transform = '';
-    });
+  burger.addEventListener('click', () => setMenu(!open));
+
+  mobileMenu.querySelectorAll('a').forEach(link =>
+    link.addEventListener('click', () => setMenu(false))
+  );
+
+  // ESC ile kapat
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && open) setMenu(false);
   });
 })();
 
 /* ─────────────────────────────────────────────
-   SCROLL REVEAL
+   4. SCROLL REVEAL
 ───────────────────────────────────────────── */
 (function initScrollReveal() {
   const elements = document.querySelectorAll('.reveal');
@@ -98,16 +112,13 @@
 
   const observer = new IntersectionObserver(
     (entries) => {
-      entries.forEach((entry, i) => {
+      entries.forEach(entry => {
         if (entry.isIntersecting) {
-          // Stagger siblings
           const siblings = Array.from(
             entry.target.parentElement.querySelectorAll('.reveal:not(.visible)')
           );
           const idx = siblings.indexOf(entry.target);
-          setTimeout(() => {
-            entry.target.classList.add('visible');
-          }, idx * 80);
+          setTimeout(() => entry.target.classList.add('visible'), idx * 80);
           observer.unobserve(entry.target);
         }
       });
@@ -119,22 +130,21 @@
 })();
 
 /* ─────────────────────────────────────────────
-   COUNTER ANIMATION
+   5. SAYAÇ / İSTATİSTİK ANİMASYONU ★
 ───────────────────────────────────────────── */
 (function initCounters() {
-  const counters = document.querySelectorAll('.stat-num');
+  const counters = document.querySelectorAll('.stat-num[data-target]');
   if (!counters.length) return;
 
   function animateCounter(el) {
-    const target = parseInt(el.dataset.target, 10);
+    const target   = parseInt(el.dataset.target, 10);
     const duration = 1800;
-    const start = performance.now();
+    const start    = performance.now();
 
     function update(timestamp) {
-      const elapsed = timestamp - start;
+      const elapsed  = timestamp - start;
       const progress = Math.min(elapsed / duration, 1);
-      // Easing
-      const ease = 1 - Math.pow(1 - progress, 3);
+      const ease     = 1 - Math.pow(1 - progress, 3);
       el.textContent = Math.floor(ease * target);
       if (progress < 1) requestAnimationFrame(update);
       else el.textContent = target;
@@ -158,10 +168,10 @@
 })();
 
 /* ─────────────────────────────────────────────
-   NEWSLETTER FORM
+   6. NEWSLETTER FORMU
 ───────────────────────────────────────────── */
 (function initNewsletter() {
-  const form = document.getElementById('nl-form');
+  const form    = document.getElementById('nl-form');
   const success = document.getElementById('nl-success');
   if (!form) return;
 
@@ -170,43 +180,36 @@
     const btn = form.querySelector('button');
     btn.textContent = '...';
     btn.disabled = true;
-
     setTimeout(() => {
       form.style.display = 'none';
-      success.classList.add('show');
+      if (success) success.classList.add('show');
     }, 1000);
   });
 })();
 
 /* ─────────────────────────────────────────────
-   PRODUCT FILTER (Products Page)
+   7. ÜRÜN FİLTRESİ (Products Sayfası)
 ───────────────────────────────────────────── */
 (function initProductFilter() {
   const filterBtns = document.querySelectorAll('.filter-btn');
-  const cards = document.querySelectorAll('.product-card[data-brand]');
+  const cards      = document.querySelectorAll('.product-card[data-brand]');
   const sortSelect = document.getElementById('sort-select');
-  const grid = document.getElementById('shop-grid');
+  const grid       = document.getElementById('shop-grid');
   if (!filterBtns.length) return;
 
   let currentFilter = 'all';
 
   function applyFilters() {
     cards.forEach(card => {
-      const brand = card.dataset.brand;
+      const brand   = card.dataset.brand;
       const visible = currentFilter === 'all' || brand === currentFilter;
-
       if (visible) {
         card.style.display = '';
-        setTimeout(() => {
-          card.style.opacity = '1';
-          card.style.transform = '';
-        }, 10);
+        setTimeout(() => { card.style.opacity = '1'; card.style.transform = ''; }, 10);
       } else {
-        card.style.opacity = '0';
+        card.style.opacity   = '0';
         card.style.transform = 'scale(0.9)';
-        setTimeout(() => {
-          card.style.display = 'none';
-        }, 300);
+        setTimeout(() => { card.style.display = 'none'; }, 300);
       }
     });
   }
@@ -222,50 +225,41 @@
 
   if (sortSelect) {
     sortSelect.addEventListener('change', () => {
-      const value = sortSelect.value;
+      const value      = sortSelect.value;
       const cardsArray = Array.from(cards);
-
       cardsArray.sort((a, b) => {
-        if (value === 'price-asc') return parseInt(a.dataset.price) - parseInt(b.dataset.price);
+        if (value === 'price-asc')  return parseInt(a.dataset.price) - parseInt(b.dataset.price);
         if (value === 'price-desc') return parseInt(b.dataset.price) - parseInt(a.dataset.price);
-        if (value === 'name') return (a.dataset.name || '').localeCompare(b.dataset.name || '');
+        if (value === 'name')       return (a.dataset.name || '').localeCompare(b.dataset.name || '');
         return 0;
       });
-
-      if (grid) {
-        cardsArray.forEach(card => grid.appendChild(card));
-      }
+      if (grid) cardsArray.forEach(card => grid.appendChild(card));
     });
   }
 })();
 
 /* ─────────────────────────────────────────────
-   ADD TO CART (Products Page)
+   8. SEPETE EKLE (Toast Bildirimi)
 ───────────────────────────────────────────── */
 (function initCart() {
-  const btns = document.querySelectorAll('.card-btn');
+  const btns  = document.querySelectorAll('.card-btn');
   const toast = document.getElementById('cart-toast');
   if (!btns.length || !toast) return;
 
   let toastTimeout;
 
   btns.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const card = btn.closest('.product-card');
-      const name = card ? card.querySelector('.card-name')?.textContent : 'Ürün';
-
-      // Button feedback
+    btn.addEventListener('click', () => {
       const orig = btn.textContent;
-      btn.textContent = '✓ Eklendi';
+      btn.textContent      = '✓ Eklendi';
       btn.style.background = 'rgba(0,212,255,0.2)';
-      btn.style.color = 'var(--accent)';
+      btn.style.color      = 'var(--accent)';
       setTimeout(() => {
-        btn.textContent = orig;
+        btn.textContent      = orig;
         btn.style.background = '';
-        btn.style.color = '';
+        btn.style.color      = '';
       }, 1500);
 
-      // Toast
       clearTimeout(toastTimeout);
       toast.classList.add('show');
       toastTimeout = setTimeout(() => toast.classList.remove('show'), 2800);
@@ -274,26 +268,22 @@
 })();
 
 /* ─────────────────────────────────────────────
-   MULTI-STEP CONTACT FORM
+   9. ÇOK ADIMLI İLETİŞİM FORMU
 ───────────────────────────────────────────── */
 let currentStep = 1;
 const TOTAL_STEPS = 3;
 
 function updateStepUI(step) {
-  // Hide all steps
   document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
-  // Show current
   const current = document.getElementById('step-' + step);
   if (current) current.classList.add('active');
 
-  // Update step indicators
   document.querySelectorAll('.step-dot').forEach((dot, idx) => {
     dot.classList.remove('active', 'completed');
     if (idx + 1 === step) dot.classList.add('active');
-    if (idx + 1 < step) dot.classList.add('completed');
+    if (idx + 1 < step)  dot.classList.add('completed');
   });
 
-  // Update step lines
   document.querySelectorAll('.step-line').forEach((line, idx) => {
     line.classList.toggle('active', idx + 1 < step);
   });
@@ -302,60 +292,32 @@ function updateStepUI(step) {
 function validateStep(step) {
   let valid = true;
 
-  function showError(id, errorId) {
+  function check(id, errId) {
     const input = document.getElementById(id);
-    const err = document.getElementById(errorId);
-    if (!input) return true;
-    const empty = !input.value.trim();
-    const isEmail = input.type === 'email';
-    const emailInvalid = isEmail && input.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value);
-    const invalid = empty || emailInvalid;
+    const err   = document.getElementById(errId);
+    if (!input) return;
+    const empty        = !input.value.trim();
+    const emailInvalid = input.type === 'email' && input.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value);
+    const invalid      = empty || emailInvalid;
     input.classList.toggle('error', invalid);
     if (err) err.classList.toggle('show', invalid);
     if (invalid) valid = false;
-    return !invalid;
   }
 
   if (step === 1) {
-    showError('fname', 'fname-err');
-    showError('lname', 'lname-err');
-    showError('email', 'email-err');
+    check('fname', 'fname-err');
+    check('lname', 'lname-err');
+    check('email', 'email-err');
   }
 
   if (step === 2) {
-    // Subject
-    const subject = document.getElementById('subject');
-    const subjectErr = document.getElementById('subject-err');
-    if (subject && !subject.value) {
-      subject.classList.add('error');
-      if (subjectErr) subjectErr.classList.add('show');
-      valid = false;
-    } else if (subject) {
-      subject.classList.remove('error');
-      if (subjectErr) subjectErr.classList.remove('show');
-    }
-
-    // Message
-    const msg = document.getElementById('message');
-    const msgErr = document.getElementById('message-err');
-    if (msg && !msg.value.trim()) {
-      msg.classList.add('error');
-      if (msgErr) msgErr.classList.add('show');
-      valid = false;
-    } else if (msg) {
-      msg.classList.remove('error');
-      if (msgErr) msgErr.classList.remove('show');
-    }
-
-    // Consent
-    const consent = document.getElementById('consent');
+    ['subject', 'message'].forEach(id => check(id, id + '-err'));
+    const consent    = document.getElementById('consent');
     const consentErr = document.getElementById('consent-err');
     if (consent && !consent.checked) {
       if (consentErr) consentErr.classList.add('show');
       valid = false;
-    } else if (consentErr) {
-      consentErr.classList.remove('show');
-    }
+    } else if (consentErr) consentErr.classList.remove('show');
   }
 
   return valid;
@@ -364,18 +326,13 @@ function validateStep(step) {
 function buildPreview() {
   const grid = document.getElementById('preview-grid');
   if (!grid) return;
-
   const fields = [
-    { label: 'Ad', id: 'fname' },
-    { label: 'Soyad', id: 'lname' },
-    { label: 'E-posta', id: 'email' },
-    { label: 'Telefon', id: 'phone' },
-    { label: 'Konu', id: 'subject' },
+    { label: 'Ad',      id: 'fname'   },
+    { label: 'Soyad',   id: 'lname'   },
+    { label: 'E-posta', id: 'email'   },
+    { label: 'Telefon', id: 'phone'   },
+    { label: 'Konu',    id: 'subject' },
   ];
-
-  const msgEl = document.getElementById('message');
-  const msgValue = msgEl ? msgEl.value : '';
-
   grid.innerHTML = '';
   fields.forEach(f => {
     const el = document.getElementById(f.id);
@@ -386,30 +343,30 @@ function buildPreview() {
       grid.appendChild(div);
     }
   });
-
-  if (msgValue) {
+  const msg = document.getElementById('message');
+  if (msg && msg.value) {
     const div = document.createElement('div');
     div.className = 'preview-item';
     div.style.gridColumn = '1 / -1';
-    div.innerHTML = `<label>Mesaj</label><span>${msgValue.length > 100 ? msgValue.slice(0, 100) + '…' : msgValue}</span>`;
+    div.innerHTML = `<label>Mesaj</label><span>${msg.value.length > 100 ? msg.value.slice(0, 100) + '…' : msg.value}</span>`;
     grid.appendChild(div);
   }
 }
 
-window.nextStep = function (from) {
+window.nextStep = function(from) {
   if (!validateStep(from)) return;
   currentStep = from + 1;
   if (currentStep === TOTAL_STEPS) buildPreview();
   updateStepUI(currentStep);
 };
 
-window.prevStep = function (from) {
+window.prevStep = function(from) {
   currentStep = from - 1;
   updateStepUI(currentStep);
 };
 
-window.resetForm = function () {
-  const form = document.getElementById('contact-form');
+window.resetForm = function() {
+  const form    = document.getElementById('contact-form');
   const success = document.getElementById('form-success');
   if (form) {
     form.reset();
@@ -423,40 +380,31 @@ window.resetForm = function () {
 };
 
 (function initContactForm() {
-  const form = document.getElementById('contact-form');
+  const form    = document.getElementById('contact-form');
   if (!form) return;
 
-  // Character counter
-  const msgArea = document.getElementById('message');
+  const msgArea   = document.getElementById('message');
   const charCount = document.getElementById('char-count');
   if (msgArea && charCount) {
     msgArea.addEventListener('input', () => {
-      const len = Math.min(msgArea.value.length, 500);
-      charCount.textContent = len;
-      if (msgArea.value.length > 500) {
-        msgArea.value = msgArea.value.slice(0, 500);
-      }
+      charCount.textContent = Math.min(msgArea.value.length, 500);
+      if (msgArea.value.length > 500) msgArea.value = msgArea.value.slice(0, 500);
     });
   }
 
-  // Clear errors on input
   form.querySelectorAll('.form-input').forEach(input => {
     input.addEventListener('input', () => {
       input.classList.remove('error');
-      const errId = input.id + '-err';
-      const err = document.getElementById(errId);
+      const err = document.getElementById(input.id + '-err');
       if (err) err.classList.remove('show');
     });
   });
 
-  // Form submit
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     if (!validateStep(2)) return;
-
     const btn = document.getElementById('submit-btn');
     if (btn) btn.classList.add('loading');
-
     setTimeout(() => {
       form.style.display = 'none';
       const success = document.getElementById('form-success');
@@ -466,87 +414,248 @@ window.resetForm = function () {
 })();
 
 /* ─────────────────────────────────────────────
-   PARALLAX HERO ORBs
+   10. PARALLAX HERO ORB'LARI
 ───────────────────────────────────────────── */
 (function initParallax() {
   const orbs = document.querySelectorAll('.orb');
   if (!orbs.length) return;
 
   document.addEventListener('mousemove', (e) => {
-    const cx = window.innerWidth / 2;
-    const cy = window.innerHeight / 2;
-    const dx = (e.clientX - cx) / cx;
-    const dy = (e.clientY - cy) / cy;
-
+    const dx = (e.clientX - window.innerWidth  / 2) / (window.innerWidth  / 2);
+    const dy = (e.clientY - window.innerHeight / 2) / (window.innerHeight / 2);
     orbs.forEach((orb, i) => {
-      const strength = (i + 1) * 12;
-      orb.style.transform = `translate(${dx * strength}px, ${dy * strength}px)`;
+      const s = (i + 1) * 12;
+      orb.style.transform = `translate(${dx * s}px, ${dy * s}px)`;
     });
   });
 })();
 
 /* ─────────────────────────────────────────────
-   CARD HOVER TILT
+   11. KART HOVER TİLT EFEKTİ
 ───────────────────────────────────────────── */
 (function initTilt() {
-  const cards = document.querySelectorAll('.product-card');
-  cards.forEach(card => {
+  document.querySelectorAll('.product-card').forEach(card => {
     card.addEventListener('mousemove', (e) => {
-      const rect = card.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      const cx = rect.width / 2;
-      const cy = rect.height / 2;
-      const rotateX = (y - cy) / cy * -5;
-      const rotateY = (x - cx) / cx * 5;
-      card.style.transform = `translateY(-6px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+      const { left, top, width, height } = card.getBoundingClientRect();
+      const x  = e.clientX - left;
+      const y  = e.clientY - top;
+      const rx = (y - height / 2) / (height / 2) * -5;
+      const ry = (x - width  / 2) / (width  / 2) *  5;
+      card.style.transform = `translateY(-6px) rotateX(${rx}deg) rotateY(${ry}deg)`;
     });
-
     card.addEventListener('mouseleave', () => {
-      card.style.transform = '';
+      card.style.transform  = '';
       card.style.transition = 'transform 0.5s ease';
-      setTimeout(() => card.style.transition = '', 500);
+      setTimeout(() => { card.style.transition = ''; }, 500);
     });
   });
 })();
 
 /* ─────────────────────────────────────────────
-   SMOOTH PAGE TRANSITIONS
+   12. DARK MODE TOGGLE ★
 ───────────────────────────────────────────── */
-(function initPageTransitions() {
-  document.querySelectorAll('a[href]').forEach(link => {
-    const href = link.getAttribute('href');
-    if (href && !href.startsWith('#') && !href.startsWith('mailto') && !href.startsWith('tel')) {
-      link.addEventListener('click', (e) => {
-        // Only same-origin
-        if (link.hostname !== window.location.hostname) return;
-        e.preventDefault();
-        document.body.style.opacity = '0';
-        document.body.style.transition = 'opacity 0.3s ease';
-        setTimeout(() => {
-          window.location.href = href;
-        }, 300);
-      });
+(function initDarkMode() {
+  // Kaydedilmiş tema veya sistem tercihi
+  const savedTheme  = localStorage.getItem('nexus-theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  let theme = savedTheme || (prefersDark ? 'dark' : 'light');
+
+  function applyTheme(t) {
+    document.documentElement.setAttribute('data-theme', t);
+    localStorage.setItem('nexus-theme', t);
+    // Tüm toggle butonlarını güncelle
+    document.querySelectorAll('.dark-mode-btn, .nav-dark-toggle').forEach(btn => {
+      btn.textContent = t === 'dark' ? '☀️' : '🌙';
+      btn.title       = t === 'dark' ? 'Açık Moda Geç' : 'Koyu Moda Geç';
+    });
+  }
+
+  applyTheme(theme);
+
+  document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('dark-mode-btn') ||
+        e.target.classList.contains('nav-dark-toggle')) {
+      theme = theme === 'dark' ? 'light' : 'dark';
+      applyTheme(theme);
     }
   });
+})();
 
-  // Fade in on load
+/* ─────────────────────────────────────────────
+   13. SLİDER (Müşteri Yorumları) ★
+───────────────────────────────────────────── */
+(function initSlider() {
+  const track   = document.getElementById('slider-track');
+  const dotsWrap= document.getElementById('slider-dots');
+  const btnPrev = document.getElementById('slider-prev');
+  const btnNext = document.getElementById('slider-next');
+  if (!track) return;
+
+  const slides    = track.querySelectorAll('.slide');
+  const total     = slides.length;
+  let   current   = 0;
+  let   autoTimer = null;
+
+  // Dot'ları oluştur
+  if (dotsWrap) {
+    slides.forEach((_, i) => {
+      const dot = document.createElement('button');
+      dot.className   = 'slider-dot' + (i === 0 ? ' active' : '');
+      dot.setAttribute('aria-label', `Yorum ${i + 1}`);
+      dot.addEventListener('click', () => goTo(i));
+      dotsWrap.appendChild(dot);
+    });
+  }
+
+  function goTo(index) {
+    current = (index + total) % total;
+    track.style.transform = `translateX(-${current * 100}%)`;
+    if (dotsWrap) {
+      dotsWrap.querySelectorAll('.slider-dot').forEach((d, i) =>
+        d.classList.toggle('active', i === current)
+      );
+    }
+  }
+
+  function startAuto() {
+    stopAuto();
+    autoTimer = setInterval(() => goTo(current + 1), 5000);
+  }
+  function stopAuto() {
+    clearInterval(autoTimer);
+  }
+
+  if (btnPrev) btnPrev.addEventListener('click', () => { goTo(current - 1); startAuto(); });
+  if (btnNext) btnNext.addEventListener('click', () => { goTo(current + 1); startAuto(); });
+
+  // Touch / Swipe
+  let startX = 0;
+  track.addEventListener('touchstart', e => { startX = e.touches[0].clientX; stopAuto(); }, { passive: true });
+  track.addEventListener('touchend',   e => {
+    const diff = startX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) goTo(current + (diff > 0 ? 1 : -1));
+    startAuto();
+  });
+
+  startAuto();
+})();
+
+/* ─────────────────────────────────────────────
+   14. SEKMELİ İÇERİK (Tabs) ★
+───────────────────────────────────────────── */
+(function initTabs() {
+  const tabBtns = document.querySelectorAll('.tab-btn');
+  const tabPanes= document.querySelectorAll('.tab-pane');
+  if (!tabBtns.length) return;
+
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.tab;
+      tabBtns.forEach(b => b.classList.remove('active'));
+      tabPanes.forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      const pane = document.getElementById('tab-' + target);
+      if (pane) pane.classList.add('active');
+    });
+  });
+})();
+
+/* ─────────────────────────────────────────────
+   15. MODAL PENCERE ★
+───────────────────────────────────────────── */
+(function initModal() {
+  const overlay = document.getElementById('modal-overlay');
+  if (!overlay) return;
+
+  function openModal()  { overlay.classList.add('open');    document.body.style.overflow = 'hidden'; }
+  function closeModal() { overlay.classList.remove('open'); document.body.style.overflow = '';       }
+
+  // Tüm modal açma butonları
+  document.querySelectorAll('[data-modal="open"], .open-modal-btn').forEach(btn =>
+    btn.addEventListener('click', openModal)
+  );
+
+  // Kapatma butonları
+  document.querySelectorAll('[data-modal="close"], .modal-close-btn').forEach(btn =>
+    btn.addEventListener('click', closeModal)
+  );
+
+  // Overlay dışına tıkla
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) closeModal();
+  });
+
+  // ESC tuşu
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal();
+  });
+})();
+
+/* ─────────────────────────────────────────────
+   16. YUKARI ÇIK BUTONU ★
+───────────────────────────────────────────── */
+(function initBackToTop() {
+  const btn = document.getElementById('back-to-top');
+  if (!btn) return;
+
+  window.addEventListener('scroll', () => {
+    btn.classList.toggle('visible', window.scrollY > 400);
+  }, { passive: true });
+
+  btn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+})();
+
+/* ─────────────────────────────────────────────
+   17. RAPOR FORMU
+───────────────────────────────────────────── */
+(function initReportForm() {
+  const form    = document.getElementById('report-form');
+  const success = document.getElementById('report-success');
+  if (!form) return;
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const btn = form.querySelector('.report-submit');
+    if (btn) { btn.disabled = true; btn.textContent = 'Gönderiliyor...'; }
+    setTimeout(() => {
+      form.style.display = 'none';
+      if (success) success.classList.add('show');
+    }, 1200);
+  });
+})();
+
+/* ─────────────────────────────────────────────
+   INIT — DOM READY
+───────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', () => {
+  // Görünür alandaki reveal elemanlarını hemen göster
+  document.querySelectorAll('.reveal').forEach(el => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight * 0.9) el.classList.add('visible');
+  });
+});
+
+/* ─────────────────────────────────────────────
+   SAYFA GEÇİŞ ANİMASYONU
+───────────────────────────────────────────── */
+(function initPageTransitions() {
   document.body.style.opacity = '0';
   window.addEventListener('load', () => {
     document.body.style.transition = 'opacity 0.4s ease';
-    document.body.style.opacity = '1';
+    document.body.style.opacity    = '1';
+  });
+
+  document.querySelectorAll('a[href]').forEach(link => {
+    const href = link.getAttribute('href');
+    if (!href || href.startsWith('#') || href.startsWith('mailto') || href.startsWith('tel')) return;
+    if (link.hostname && link.hostname !== window.location.hostname) return;
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      document.body.style.transition = 'opacity 0.3s ease';
+      document.body.style.opacity    = '0';
+      setTimeout(() => { window.location.href = href; }, 300);
+    });
   });
 })();
-
-/* ─────────────────────────────────────────────
-   INIT ON DOM READY
-───────────────────────────────────────────── */
-document.addEventListener('DOMContentLoaded', () => {
-  // Trigger initial reveals for elements in view
-  document.querySelectorAll('.reveal').forEach(el => {
-    const rect = el.getBoundingClientRect();
-    if (rect.top < window.innerHeight * 0.9) {
-      el.classList.add('visible');
-    }
-  });
-});
