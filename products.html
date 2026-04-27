@@ -7,7 +7,7 @@
   
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
 
-  <link rel="stylesheet" href="assests/css/style.css"/>
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
 <div class="cursor" id="cursor"></div>
@@ -172,6 +172,132 @@
   </div>
 </section>
 
+<!-- ÜRÜN DEĞERLENDİRME FORMU -->
+<section class="review-section">
+  <div class="review-container">
+    <div class="section-header">
+      <div class="section-tag reveal">Geri Bildirim</div>
+      <h2 class="section-title reveal">Ürün <span class="gradient-text">Değerlendirin</span></h2>
+      <p class="reveal" style="color:var(--text-muted);max-width:520px;margin:0 auto">Deneyimlerinizi paylaşın, diğer müşterilere yol gösterin.</p>
+    </div>
+
+    <div class="review-form-card reveal">
+      <form id="review-form" class="review-form" novalidate>
+
+        <!-- Ürün Seçimi -->
+        <div class="review-form-group">
+          <label for="rv-product">Değerlendirdiğiniz Ürün <span class="req">*</span></label>
+          <select id="rv-product" class="review-input review-select" required>
+            <option value="">— Ürün seçin —</option>
+            <option value="iPhone 15 Pro Max">iPhone 15 Pro Max</option>
+            <option value="iPhone 15 Pro">iPhone 15 Pro</option>
+            <option value="iPhone 15">iPhone 15</option>
+            <option value="Galaxy S25 Ultra">Galaxy S25 Ultra</option>
+            <option value="Galaxy S25+">Galaxy S25+</option>
+            <option value="Galaxy A55">Galaxy A55</option>
+            <option value="Xiaomi 14 Ultra">Xiaomi 14 Ultra</option>
+            <option value="Redmi Note 13 Pro">Redmi Note 13 Pro</option>
+            <option value="Pixel 9 Pro">Pixel 9 Pro</option>
+          </select>
+          <span class="review-error" id="rv-product-err">Lütfen bir ürün seçin.</span>
+        </div>
+
+        <!-- Ad Soyad -->
+        <div class="review-row">
+          <div class="review-form-group">
+            <label for="rv-name">Adınız Soyadınız <span class="req">*</span></label>
+            <input type="text" id="rv-name" class="review-input" placeholder="Örn: Ahmet Yılmaz" required/>
+            <span class="review-error" id="rv-name-err">Ad soyad alanı zorunludur.</span>
+          </div>
+          <div class="review-form-group">
+            <label for="rv-email">E-posta <span class="req">*</span></label>
+            <input type="email" id="rv-email" class="review-input" placeholder="ornek@email.com" required/>
+            <span class="review-error" id="rv-email-err">Geçerli bir e-posta adresi girin.</span>
+          </div>
+        </div>
+
+        <!-- Yıldız Puanı -->
+        <div class="review-form-group">
+          <label>Genel Puan <span class="req">*</span></label>
+          <div class="star-rating" id="star-rating" role="group" aria-label="Puan seçin">
+            <input type="radio" id="star5" name="rating" value="5" required/>
+            <label for="star5" title="5 - Mükemmel">★</label>
+            <input type="radio" id="star4" name="rating" value="4"/>
+            <label for="star4" title="4 - Çok İyi">★</label>
+            <input type="radio" id="star3" name="rating" value="3"/>
+            <label for="star3" title="3 - İyi">★</label>
+            <input type="radio" id="star2" name="rating" value="2"/>
+            <label for="star2" title="2 - Orta">★</label>
+            <input type="radio" id="star1" name="rating" value="1"/>
+            <label for="star1" title="1 - Kötü">★</label>
+          </div>
+          <span class="star-label" id="star-label">Puan seçmek için yıldıza tıklayın</span>
+          <span class="review-error" id="rv-rating-err">Lütfen bir puan verin.</span>
+        </div>
+
+        <!-- Başlık -->
+        <div class="review-form-group">
+          <label for="rv-title">Değerlendirme Başlığı <span class="req">*</span></label>
+          <input type="text" id="rv-title" class="review-input" placeholder="Örn: Harika bir telefon!" maxlength="80" required/>
+          <span class="review-error" id="rv-title-err">Başlık alanı zorunludur.</span>
+        </div>
+
+        <!-- Yorum -->
+        <div class="review-form-group">
+          <label for="rv-comment">Yorumunuz <span class="req">*</span></label>
+          <textarea id="rv-comment" class="review-input review-textarea" rows="5"
+            placeholder="Ürünü nasıl buldunuz? Artıları ve eksileri nelerdir?" maxlength="800" required></textarea>
+          <div class="review-char-row">
+            <span class="review-error" id="rv-comment-err">Yorum alanı en az 20 karakter olmalıdır.</span>
+            <span class="rv-char-count"><span id="rv-char-num">0</span>/800</span>
+          </div>
+        </div>
+
+        <!-- Öneri -->
+        <div class="review-form-group">
+          <label>Bu ürünü tavsiye eder misiniz? <span class="req">*</span></label>
+          <div class="recommend-group" id="recommend-group">
+            <label class="recommend-option">
+              <input type="radio" name="recommend" value="evet" required/>
+              <span class="recommend-btn">👍 Evet, tavsiye ederim</span>
+            </label>
+            <label class="recommend-option">
+              <input type="radio" name="recommend" value="hayir"/>
+              <span class="recommend-btn">👎 Hayır, tavsiye etmem</span>
+            </label>
+          </div>
+          <span class="review-error" id="rv-recommend-err">Lütfen bir seçenek işaretleyin.</span>
+        </div>
+
+        <!-- KVKK -->
+        <div class="review-form-group">
+          <label class="rv-checkbox-label">
+            <input type="checkbox" id="rv-consent" class="rv-checkbox" required/>
+            <span class="rv-checkbox-custom"></span>
+            <span>Değerlendirmemi NEXUS platformunda yayınlanmasına onay veriyorum. <span class="req">*</span></span>
+          </label>
+          <span class="review-error" id="rv-consent-err">Onay vermeniz gerekmektedir.</span>
+        </div>
+
+        <button type="submit" class="review-submit-btn" id="review-submit-btn">
+          <span class="btn-text">Değerlendirimi Gönder</span>
+          <span class="btn-loader"></span>
+        </button>
+      </form>
+
+      <!-- Başarı Mesajı -->
+      <div class="review-success" id="review-success">
+        <div class="review-success-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </div>
+        <h3>Değerlendirmeniz Alındı!</h3>
+        <p>Katkınız için teşekkür ederiz. Yorumunuz incelendikten sonra yayına alınacaktır.</p>
+        <button onclick="resetReviewForm()" class="review-reset-btn">Yeni Değerlendirme</button>
+      </div>
+    </div>
+  </div>
+</section>
+
 <footer class="footer">
   <div class="footer-inner">
     <div class="footer-brand">
@@ -209,6 +335,6 @@
 <!-- YUKARIYA ÇIK + DARK MODE -->
 <button class="back-to-top" id="back-to-top" title="Yukarı Çık">↑</button>
 <button class="dark-mode-btn" title="Tema Değiştir">🌙</button>
-  <script src="assests/js/script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
