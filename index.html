@@ -7,7 +7,7 @@
   
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
 
-  <link rel="stylesheet" href="assests/css/style.css"/>
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
 
@@ -315,6 +315,108 @@
   </div>
 </section>
 
+<!-- GERİ BİLDİRİM FORMU -->
+<section class="feedback-section">
+  <div class="feedback-container">
+    <div class="feedback-info">
+      <div class="section-tag reveal">Görüşleriniz</div>
+      <h2 class="reveal">Bize <span class="gradient-text">Geri Bildirim</span> Verin</h2>
+      <p class="reveal">Hizmetimizi geliştirmemize yardımcı olun. Her görüş bizim için değerlidir.</p>
+      <div class="feedback-points">
+        <div class="feedback-point reveal">
+          <div class="fp-icon">💡</div>
+          <div><strong>Öneri &amp; Şikayet</strong><span>Her görüş dikkate alınır</span></div>
+        </div>
+        <div class="feedback-point reveal">
+          <div class="fp-icon">⚡</div>
+          <div><strong>Hızlı Yanıt</strong><span>24 saat içinde geri döneriz</span></div>
+        </div>
+        <div class="feedback-point reveal">
+          <div class="fp-icon">🔒</div>
+          <div><strong>Gizlilik</strong><span>Bilgileriniz güvende</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feedback-form-card reveal">
+      <form id="feedback-form" class="feedback-form" novalidate>
+        <div class="fb-row">
+          <div class="fb-group">
+            <label for="fb-name">Ad Soyad <span class="req">*</span></label>
+            <input type="text" id="fb-name" class="fb-input" placeholder="Adınız Soyadınız" required/>
+            <span class="fb-error" id="fb-name-err">Ad soyad zorunludur.</span>
+          </div>
+          <div class="fb-group">
+            <label for="fb-email">E-posta <span class="req">*</span></label>
+            <input type="email" id="fb-email" class="fb-input" placeholder="ornek@email.com" required/>
+            <span class="fb-error" id="fb-email-err">Geçerli bir e-posta girin.</span>
+          </div>
+        </div>
+
+        <div class="fb-group">
+          <label for="fb-type">Geri Bildirim Türü <span class="req">*</span></label>
+          <select id="fb-type" class="fb-input fb-select" required>
+            <option value="">— Seçin —</option>
+            <option value="oneri">💡 Öneri</option>
+            <option value="sikayet">📢 Şikayet</option>
+            <option value="odule">⭐ Ödül / Övgü</option>
+            <option value="teknik">🔧 Teknik Sorun</option>
+            <option value="diger">📋 Diğer</option>
+          </select>
+          <span class="fb-error" id="fb-type-err">Lütfen bir tür seçin.</span>
+        </div>
+
+        <div class="fb-group">
+          <label for="fb-message">Mesajınız <span class="req">*</span></label>
+          <textarea id="fb-message" class="fb-input fb-textarea" rows="4"
+            placeholder="Görüşlerinizi buraya yazın... (en az 15 karakter)" maxlength="600" required></textarea>
+          <div class="fb-char-row">
+            <span class="fb-error" id="fb-message-err">Mesaj en az 15 karakter olmalıdır.</span>
+            <span class="fb-char-count"><span id="fb-char-num">0</span>/600</span>
+          </div>
+        </div>
+
+        <div class="fb-group">
+          <label>Hizmet Memnuniyeti <span class="req">*</span></label>
+          <div class="satisfaction-group">
+            <label class="sat-option">
+              <input type="radio" name="satisfaction" value="cok-iyi" required/>
+              <span class="sat-btn">😄 Çok İyi</span>
+            </label>
+            <label class="sat-option">
+              <input type="radio" name="satisfaction" value="iyi"/>
+              <span class="sat-btn">🙂 İyi</span>
+            </label>
+            <label class="sat-option">
+              <input type="radio" name="satisfaction" value="orta"/>
+              <span class="sat-btn">😐 Orta</span>
+            </label>
+            <label class="sat-option">
+              <input type="radio" name="satisfaction" value="kotu"/>
+              <span class="sat-btn">😞 Kötü</span>
+            </label>
+          </div>
+          <span class="fb-error" id="fb-sat-err">Lütfen memnuniyet seviyenizi seçin.</span>
+        </div>
+
+        <button type="submit" class="fb-submit-btn" id="fb-submit-btn">
+          <span class="btn-text">Gönder</span>
+          <span class="btn-loader"></span>
+        </button>
+      </form>
+
+      <div class="fb-success" id="fb-success">
+        <div class="fb-success-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </div>
+        <h3>Teşekkür Ederiz!</h3>
+        <p>Geri bildiriminiz başarıyla alındı. En kısa sürede size dönüş yapacağız.</p>
+        <button onclick="resetFeedbackForm()" class="fb-reset-btn">Yeni Geri Bildirim</button>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- FOOTER -->
 
 <!-- SEKMELİ İÇERİK ★ -->
@@ -494,6 +596,6 @@
 <button class="dark-mode-btn" title="Tema Değiştir">🌙</button>
 
 
-  <script src="assests/js/script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
