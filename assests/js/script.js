@@ -659,3 +659,217 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 })();
+
+/* ─────────────────────────────────────────────
+   18. ÜRÜN DEĞERLENDİRME FORMU ★
+───────────────────────────────────────────── */
+(function initReviewForm() {
+  const form    = document.getElementById('review-form');
+  const success = document.getElementById('review-success');
+  if (!form) return;
+
+  /* Yıldız etiketi */
+  const starLabels = ['', 'Kötü', 'Orta', 'İyi', 'Çok İyi', 'Mükemmel'];
+  const starLabelEl = document.getElementById('star-label');
+  document.querySelectorAll('.star-rating input').forEach(input => {
+    input.addEventListener('change', () => {
+      if (starLabelEl) starLabelEl.textContent = starLabels[input.value] || '';
+      const ratingErr = document.getElementById('rv-rating-err');
+      if (ratingErr) ratingErr.classList.remove('show');
+    });
+  });
+
+  /* Karakter sayacı */
+  const commentArea = document.getElementById('rv-comment');
+  const charNum     = document.getElementById('rv-char-num');
+  if (commentArea && charNum) {
+    commentArea.addEventListener('input', () => {
+      charNum.textContent = Math.min(commentArea.value.length, 800);
+      if (commentArea.value.length > 800) commentArea.value = commentArea.value.slice(0, 800);
+    });
+  }
+
+  /* Anlık hata temizleme */
+  form.querySelectorAll('.review-input').forEach(input => {
+    input.addEventListener('input', () => {
+      input.classList.remove('rv-error');
+      const err = document.getElementById(input.id + '-err');
+      if (err) err.classList.remove('show');
+    });
+  });
+
+  /* Doğrulama */
+  function validateReview() {
+    let valid = true;
+
+    function checkField(id, errId, minLen) {
+      const el  = document.getElementById(id);
+      const err = document.getElementById(errId);
+      if (!el) return;
+      const empty = !el.value.trim();
+      const tooShort = minLen && el.value.trim().length < minLen;
+      const emailBad = el.type === 'email' && el.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value);
+      const invalid = empty || tooShort || emailBad;
+      el.classList.toggle('rv-error', invalid);
+      if (err) err.classList.toggle('show', invalid);
+      if (invalid) valid = false;
+    }
+
+    checkField('rv-product', 'rv-product-err');
+    checkField('rv-name',    'rv-name-err');
+    checkField('rv-email',   'rv-email-err');
+    checkField('rv-title',   'rv-title-err');
+    checkField('rv-comment', 'rv-comment-err', 20);
+
+    /* Yıldız kontrolü */
+    const starChecked = form.querySelector('.star-rating input:checked');
+    const ratingErr   = document.getElementById('rv-rating-err');
+    if (!starChecked) {
+      if (ratingErr) ratingErr.classList.add('show');
+      valid = false;
+    } else {
+      if (ratingErr) ratingErr.classList.remove('show');
+    }
+
+    /* Tavsiye kontrolü */
+    const recChecked = form.querySelector('[name="recommend"]:checked');
+    const recErr     = document.getElementById('rv-recommend-err');
+    if (!recChecked) {
+      if (recErr) recErr.classList.add('show');
+      valid = false;
+    } else {
+      if (recErr) recErr.classList.remove('show');
+    }
+
+    /* KVKK Checkbox */
+    const consent    = document.getElementById('rv-consent');
+    const consentErr = document.getElementById('rv-consent-err');
+    if (consent && !consent.checked) {
+      if (consentErr) consentErr.classList.add('show');
+      valid = false;
+    } else if (consentErr) {
+      consentErr.classList.remove('show');
+    }
+
+    return valid;
+  }
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!validateReview()) return;
+    const btn = document.getElementById('review-submit-btn');
+    if (btn) btn.classList.add('loading');
+    setTimeout(() => {
+      form.style.display = 'none';
+      if (success) success.classList.add('show');
+    }, 1400);
+  });
+})();
+
+window.resetReviewForm = function() {
+  const form    = document.getElementById('review-form');
+  const success = document.getElementById('review-success');
+  if (form) {
+    form.reset();
+    form.style.display = '';
+    form.querySelectorAll('.rv-error').forEach(el => el.classList.remove('rv-error'));
+    form.querySelectorAll('.review-error').forEach(el => el.classList.remove('show'));
+    const btn = document.getElementById('review-submit-btn');
+    if (btn) btn.classList.remove('loading');
+    const starLabelEl = document.getElementById('star-label');
+    if (starLabelEl) starLabelEl.textContent = 'Puan seçmek için yıldıza tıklayın';
+    const charNum = document.getElementById('rv-char-num');
+    if (charNum) charNum.textContent = '0';
+  }
+  if (success) success.classList.remove('show');
+};
+
+/* ─────────────────────────────────────────────
+   19. GERİ BİLDİRİM FORMU ★
+───────────────────────────────────────────── */
+(function initFeedbackForm() {
+  const form    = document.getElementById('feedback-form');
+  const success = document.getElementById('fb-success');
+  if (!form) return;
+
+  /* Karakter sayacı */
+  const msgArea  = document.getElementById('fb-message');
+  const charNum  = document.getElementById('fb-char-num');
+  if (msgArea && charNum) {
+    msgArea.addEventListener('input', () => {
+      charNum.textContent = Math.min(msgArea.value.length, 600);
+      if (msgArea.value.length > 600) msgArea.value = msgArea.value.slice(0, 600);
+    });
+  }
+
+  /* Anlık hata temizleme */
+  form.querySelectorAll('.fb-input').forEach(input => {
+    input.addEventListener('input', () => {
+      input.classList.remove('fb-error-border');
+      const err = document.getElementById(input.id + '-err');
+      if (err) err.classList.remove('show');
+    });
+  });
+
+  /* Doğrulama */
+  function validateFeedback() {
+    let valid = true;
+
+    function checkField(id, errId, minLen) {
+      const el  = document.getElementById(id);
+      const err = document.getElementById(errId);
+      if (!el) return;
+      const empty    = !el.value.trim();
+      const tooShort = minLen && el.value.trim().length < minLen;
+      const emailBad = el.type === 'email' && el.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value);
+      const invalid  = empty || tooShort || emailBad;
+      el.classList.toggle('fb-error-border', invalid);
+      if (err) err.classList.toggle('show', invalid);
+      if (invalid) valid = false;
+    }
+
+    checkField('fb-name',    'fb-name-err');
+    checkField('fb-email',   'fb-email-err');
+    checkField('fb-type',    'fb-type-err');
+    checkField('fb-message', 'fb-message-err', 15);
+
+    /* Memnuniyet kontrolü */
+    const satChecked = form.querySelector('[name="satisfaction"]:checked');
+    const satErr     = document.getElementById('fb-sat-err');
+    if (!satChecked) {
+      if (satErr) satErr.classList.add('show');
+      valid = false;
+    } else {
+      if (satErr) satErr.classList.remove('show');
+    }
+
+    return valid;
+  }
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!validateFeedback()) return;
+    const btn = document.getElementById('fb-submit-btn');
+    if (btn) btn.classList.add('loading');
+    setTimeout(() => {
+      form.style.display = 'none';
+      if (success) success.classList.add('show');
+    }, 1200);
+  });
+})();
+
+window.resetFeedbackForm = function() {
+  const form    = document.getElementById('feedback-form');
+  const success = document.getElementById('fb-success');
+  if (form) {
+    form.reset();
+    form.style.display = '';
+    form.querySelectorAll('.fb-error-border').forEach(el => el.classList.remove('fb-error-border'));
+    form.querySelectorAll('.fb-error').forEach(el => el.classList.remove('show'));
+    const btn = document.getElementById('fb-submit-btn');
+    if (btn) btn.classList.remove('loading');
+    const charNum = document.getElementById('fb-char-num');
+    if (charNum) charNum.textContent = '0';
+  }
+  if (success) success.classList.remove('show');
+};
