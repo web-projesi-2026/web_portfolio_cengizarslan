@@ -1,0 +1,101 @@
+[
+  {
+    "id": 1,
+    "brand": "apple",
+    "name": "iPhone 15 Pro Max",
+    "price": 89999,
+    "specs": ["A17 Pro", "48MP", "256GB"],
+    "badge": "Yeni",
+    "badgeClass": "",
+    "silhouette": "iphone",
+    "style": ""
+  },
+  {
+    "id": 2,
+    "brand": "apple",
+    "name": "iPhone 15 Pro",
+    "price": 74999,
+    "specs": ["A17 Pro", "48MP", "128GB"],
+    "badge": null,
+    "badgeClass": "",
+    "silhouette": "iphone",
+    "style": "transform:scale(0.9)"
+  },
+  {
+    "id": 3,
+    "brand": "apple",
+    "name": "iPhone 15",
+    "price": 54999,
+    "specs": ["A16", "48MP", "128GB"],
+    "badge": "İndirim",
+    "badgeClass": "sale",
+    "silhouette": "iphone",
+    "style": "transform:scale(0.85);filter:hue-rotate(30deg)"
+  },
+  {
+    "id": 4,
+    "brand": "samsung",
+    "name": "Galaxy S25 Ultra",
+    "price": 74999,
+    "specs": ["Snapdragon 8", "200MP", "512GB"],
+    "badge": "En Çok Satan",
+    "badgeClass": "hot",
+    "silhouette": "samsung",
+    "style": ""
+  },
+  {
+    "id": 5,
+    "brand": "samsung",
+    "name": "Galaxy S25+",
+    "price": 59999,
+    "specs": ["Snapdragon 8", "50MP", "256GB"],
+    "badge": null,
+    "badgeClass": "",
+    "silhouette": "samsung",
+    "style": "filter:hue-rotate(180deg)"
+  },
+  {
+    "id": 6,
+    "brand": "samsung",
+    "name": "Galaxy A55",
+    "price": 39999,
+    "specs": ["Exynos 1480", "50MP", "128GB"],
+    "badge": null,
+    "badgeClass": "",
+    "silhouette": "samsung",
+    "style": "filter:hue-rotate(90deg)"
+  },
+  {
+    "id": 7,
+    "brand": "xiaomi",
+    "name": "Xiaomi 14 Ultra",
+    "price": 64999,
+    "specs": ["Snapdragon 8", "50MP", "512GB"],
+    "badge": "Pro",
+    "badgeClass": "",
+    "silhouette": "xiaomi",
+    "style": ""
+  },
+  {
+    "id": 8,
+    "brand": "xiaomi",
+    "name": "Redmi Note 13 Pro",
+    "price": 29999,
+    "specs": ["Helio G99", "200MP", "256GB"],
+    "badge": "Fırsat",
+    "badgeClass": "sale",
+    "silhouette": "xiaomi",
+    "style": "filter:hue-rotate(240deg)"
+  },
+  {
+    "id": 9,
+    "brand": "google",
+    "name": "Pixel 9 Pro",
+    "price": 49999,
+    "specs": ["Tensor G4", "50MP", "256GB"],
+    "badge": "Trend",
+    "badgeClass": "",
+    "silhouette": "google",
+    "style": ""
+  }
+]

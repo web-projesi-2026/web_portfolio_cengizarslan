@@ -22,6 +22,13 @@
     <li><a href="contact.html">İletişim</a></li>
   </ul>
   <button class="nav-cta">Alışveriş Yap</button>
+  <!-- Sepet & Favori ikonları -->
+  <button class="nav-icon-btn" id="open-cart-btn" title="Sepetim">
+    🛒 <span class="nav-badge hidden" id="cart-count">0</span>
+  </button>
+  <button class="nav-icon-btn" id="open-fav-btn" title="Favorilerim">
+    ❤️ <span class="nav-badge hidden" id="fav-count">0</span>
+  </button>
   <button class="nav-dark-toggle" title="Tema Değiştir">🌙</button>
   <div class="burger" id="burger"><span></span><span></span><span></span></div>
 </nav>
@@ -68,107 +75,15 @@
     </div>
   </div>
 
+  <!-- Kartlar JavaScript tarafından products.json'dan okunarak buraya yazılır -->
   <div class="shop-grid" id="shop-grid">
-    <!-- Apple -->
-    <div class="product-card reveal" data-brand="apple" data-price="89999" data-name="iPhone 15 Pro Max">
-      <div class="card-badge">Yeni</div>
-      <div class="card-img"><div class="phone-silhouette iphone"></div></div>
-      <div class="card-info">
-        <div class="card-brand">Apple</div>
-        <h3 class="card-name">iPhone 15 Pro Max</h3>
-        <div class="card-specs"><span>A17 Pro</span><span>48MP</span><span>256GB</span></div>
-        <div class="card-footer"><span class="card-price">₺89.999</span><button class="card-btn">Sepete Ekle</button></div>
-      </div>
-    </div>
-    <div class="product-card reveal" data-brand="apple" data-price="74999" data-name="iPhone 15 Pro">
-      <div class="card-img"><div class="phone-silhouette iphone" style="transform:scale(0.9)"></div></div>
-      <div class="card-info">
-        <div class="card-brand">Apple</div>
-        <h3 class="card-name">iPhone 15 Pro</h3>
-        <div class="card-specs"><span>A17 Pro</span><span>48MP</span><span>128GB</span></div>
-        <div class="card-footer"><span class="card-price">₺74.999</span><button class="card-btn">Sepete Ekle</button></div>
-      </div>
-    </div>
-    <div class="product-card reveal" data-brand="apple" data-price="54999" data-name="iPhone 15">
-      <div class="card-badge sale">İndirim</div>
-      <div class="card-img"><div class="phone-silhouette iphone" style="transform:scale(0.85);filter:hue-rotate(30deg)"></div></div>
-      <div class="card-info">
-        <div class="card-brand">Apple</div>
-        <h3 class="card-name">iPhone 15</h3>
-        <div class="card-specs"><span>A16</span><span>48MP</span><span>128GB</span></div>
-        <div class="card-footer"><span class="card-price">₺54.999</span><button class="card-btn">Sepete Ekle</button></div>
-      </div>
-    </div>
-
-    <!-- Samsung -->
-    <div class="product-card reveal" data-brand="samsung" data-price="74999" data-name="Galaxy S25 Ultra">
-      <div class="card-badge hot">En Çok Satan</div>
-      <div class="card-img"><div class="phone-silhouette samsung"></div></div>
-      <div class="card-info">
-        <div class="card-brand">Samsung</div>
-        <h3 class="card-name">Galaxy S25 Ultra</h3>
-        <div class="card-specs"><span>Snapdragon 8</span><span>200MP</span><span>512GB</span></div>
-        <div class="card-footer"><span class="card-price">₺74.999</span><button class="card-btn">Sepete Ekle</button></div>
-      </div>
-    </div>
-    <div class="product-card reveal" data-brand="samsung" data-price="59999" data-name="Galaxy S25+">
-      <div class="card-img"><div class="phone-silhouette samsung" style="filter:hue-rotate(180deg)"></div></div>
-      <div class="card-info">
-        <div class="card-brand">Samsung</div>
-        <h3 class="card-name">Galaxy S25+</h3>
-        <div class="card-specs"><span>Snapdragon 8</span><span>50MP</span><span>256GB</span></div>
-        <div class="card-footer"><span class="card-price">₺59.999</span><button class="card-btn">Sepete Ekle</button></div>
-      </div>
-    </div>
-    <div class="product-card reveal" data-brand="samsung" data-price="39999" data-name="Galaxy A55">
-      <div class="card-img"><div class="phone-silhouette samsung" style="filter:hue-rotate(90deg) scale(0.85)"></div></div>
-      <div class="card-info">
-        <div class="card-brand">Samsung</div>
-        <h3 class="card-name">Galaxy A55</h3>
-        <div class="card-specs"><span>Exynos 1480</span><span>50MP</span><span>128GB</span></div>
-        <div class="card-footer"><span class="card-price">₺39.999</span><button class="card-btn">Sepete Ekle</button></div>
-      </div>
-    </div>
-
-    <!-- Xiaomi -->
-    <div class="product-card reveal" data-brand="xiaomi" data-price="64999" data-name="Xiaomi 14 Ultra">
-      <div class="card-badge">Pro</div>
-      <div class="card-img"><div class="phone-silhouette xiaomi"></div></div>
-      <div class="card-info">
-        <div class="card-brand">Xiaomi</div>
-        <h3 class="card-name">Xiaomi 14 Ultra</h3>
-        <div class="card-specs"><span>Snapdragon 8</span><span>50MP</span><span>512GB</span></div>
-        <div class="card-footer"><span class="card-price">₺64.999</span><button class="card-btn">Sepete Ekle</button></div>
-      </div>
-    </div>
-    <div class="product-card reveal" data-brand="xiaomi" data-price="29999" data-name="Redmi Note 13 Pro">
-      <div class="card-badge sale">Fırsat</div>
-      <div class="card-img"><div class="phone-silhouette xiaomi" style="filter:hue-rotate(240deg)"></div></div>
-      <div class="card-info">
-        <div class="card-brand">Xiaomi</div>
-        <h3 class="card-name">Redmi Note 13 Pro</h3>
-        <div class="card-specs"><span>Helio G99</span><span>200MP</span><span>256GB</span></div>
-        <div class="card-footer"><span class="card-price">₺29.999</span><button class="card-btn">Sepete Ekle</button></div>
-      </div>
-    </div>
-
-    <!-- Google -->
-    <div class="product-card reveal" data-brand="google" data-price="49999" data-name="Pixel 9 Pro">
-      <div class="card-badge">Trend</div>
-      <div class="card-img"><div class="phone-silhouette google"></div></div>
-      <div class="card-info">
-        <div class="card-brand">Google</div>
-        <h3 class="card-name">Pixel 9 Pro</h3>
-        <div class="card-specs"><span>Tensor G4</span><span>50MP</span><span>256GB</span></div>
-        <div class="card-footer"><span class="card-price">₺49.999</span><button class="card-btn">Sepete Ekle</button></div>
-      </div>
-    </div>
+    <p style="color:var(--text-muted);padding:2rem">Ürünler yükleniyor...</p>
   </div>
 
   <!-- CART TOAST -->
   <div class="cart-toast" id="cart-toast">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
-    Ürün sepete eklendi!
+    <span id="toast-msg">Ürün sepete eklendi!</span>
   </div>
 </section>
 
@@ -189,15 +104,7 @@
           <label for="rv-product">Değerlendirdiğiniz Ürün <span class="req">*</span></label>
           <select id="rv-product" class="review-input review-select" required>
             <option value="">— Ürün seçin —</option>
-            <option value="iPhone 15 Pro Max">iPhone 15 Pro Max</option>
-            <option value="iPhone 15 Pro">iPhone 15 Pro</option>
-            <option value="iPhone 15">iPhone 15</option>
-            <option value="Galaxy S25 Ultra">Galaxy S25 Ultra</option>
-            <option value="Galaxy S25+">Galaxy S25+</option>
-            <option value="Galaxy A55">Galaxy A55</option>
-            <option value="Xiaomi 14 Ultra">Xiaomi 14 Ultra</option>
-            <option value="Redmi Note 13 Pro">Redmi Note 13 Pro</option>
-            <option value="Pixel 9 Pro">Pixel 9 Pro</option>
+            <!-- Ürünler JavaScript tarafından JSON'dan doldurulur -->
           </select>
           <span class="review-error" id="rv-product-err">Lütfen bir ürün seçin.</span>
         </div>
@@ -335,6 +242,347 @@
 <!-- YUKARIYA ÇIK + DARK MODE -->
 <button class="back-to-top" id="back-to-top" title="Yukarı Çık">↑</button>
 <button class="dark-mode-btn" title="Tema Değiştir">🌙</button>
+<!-- ══════════════ SEPET PANELİ ══════════════ -->
+<div class="panel-overlay" id="cart-overlay">
+  <div class="panel" id="cart-panel">
+    <div class="panel-header">
+      <h3>🛒 Sepetim</h3>
+      <button class="panel-close" id="close-cart-btn">✕</button>
+    </div>
+    <div class="panel-body" id="cart-body"></div>
+    <div class="panel-footer" id="cart-footer" style="display:none">
+      <div class="panel-total">
+        <span>Toplam</span>
+        <span id="cart-total-price">₺0</span>
+      </div>
+      <button class="panel-clear-btn" id="cart-clear-btn">Sepeti Temizle</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ FAVORİ PANELİ ══════════════ -->
+<div class="panel-overlay" id="fav-overlay">
+  <div class="panel" id="fav-panel">
+    <div class="panel-header">
+      <h3>❤️ Favorilerim</h3>
+      <button class="panel-close" id="close-fav-btn">✕</button>
+    </div>
+    <div class="panel-body" id="fav-body"></div>
+    <div class="panel-footer" id="fav-footer" style="display:none">
+      <button class="panel-clear-btn" id="fav-clear-btn">Tüm Favorileri Temizle</button>
+    </div>
+  </div>
+</div>
+
+<style>
+/* ── Navbar ikonları ── */
+.nav-icon-btn {
+  position:relative; background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.12); border-radius:10px;
+  padding:6px 10px; cursor:pointer; font-size:15px;
+  color:var(--text); transition:background .2s; margin-left:4px;
+}
+.nav-icon-btn:hover { background:rgba(255,255,255,0.14); }
+.nav-badge {
+  position:absolute; top:-7px; right:-7px;
+  background:var(--accent); color:#000;
+  font-size:10px; font-weight:700; border-radius:99px;
+  min-width:18px; height:18px; display:flex;
+  align-items:center; justify-content:center; padding:0 4px;
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1);
+}
+.nav-badge.bump { transform:scale(1.5); }
+.nav-badge.hidden { display:none; }
+
+/* ── Panel (Sepet / Favori) ── */
+.panel-overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,.6);
+  z-index:9000; opacity:0; pointer-events:none; transition:opacity .3s;
+}
+.panel-overlay.open { opacity:1; pointer-events:all; }
+.panel {
+  position:fixed; right:0; top:0; bottom:0; width:360px; max-width:95vw;
+  background:var(--card-bg); border-left:1px solid var(--border);
+  z-index:9001; display:flex; flex-direction:column;
+  transform:translateX(110%); transition:transform .35s cubic-bezier(.4,0,.2,1);
+}
+.panel-overlay.open .panel { transform:translateX(0); }
+.panel-header {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:20px 22px; border-bottom:1px solid var(--border);
+}
+.panel-header h3 { font-family:'Syne',sans-serif; font-size:18px; margin:0; }
+.panel-close {
+  background:none; border:none; color:var(--text); font-size:20px;
+  cursor:pointer; padding:4px 8px; border-radius:8px;
+}
+.panel-close:hover { background:rgba(255,255,255,.08); }
+.panel-body { flex:1; overflow-y:auto; padding:16px 22px; display:flex; flex-direction:column; gap:12px; }
+.panel-empty { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; opacity:.5; gap:10px; font-size:14px; }
+.panel-empty span { font-size:40px; }
+.panel-item {
+  display:flex; align-items:center; gap:12px;
+  background:rgba(255,255,255,.04); border-radius:12px;
+  padding:12px; border:1px solid var(--border);
+}
+.panel-item-icon { width:44px; height:44px; border-radius:10px; background:rgba(0,212,255,.1); display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; }
+.panel-item-info { flex:1; min-width:0; }
+.panel-item-info strong { display:block; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.panel-item-info span { font-size:12px; color:var(--text-muted); }
+.panel-item-remove { background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:16px; padding:4px; border-radius:6px; }
+.panel-item-remove:hover { color:#ff6b6b; }
+.panel-footer { padding:16px 22px; border-top:1px solid var(--border); display:flex; flex-direction:column; gap:10px; }
+.panel-total { display:flex; justify-content:space-between; font-weight:600; font-size:15px; }
+.panel-clear-btn {
+  background:rgba(255,107,107,.1); color:#ff6b6b;
+  border:1px solid rgba(255,107,107,.3); border-radius:10px;
+  padding:10px; cursor:pointer; font-size:13px;
+}
+.panel-clear-btn:hover { background:rgba(255,107,107,.2); }
+
+/* ── Kart favori butonu ── */
+.card-actions { display:flex; gap:8px; }
+.card-fav-btn {
+  background:rgba(255,255,255,.06); border:1px solid var(--border);
+  border-radius:10px; padding:8px 12px; cursor:pointer;
+  font-size:16px; line-height:1; transition:.2s; flex-shrink:0;
+}
+.card-fav-btn:hover { background:rgba(255,107,107,.15); border-color:rgba(255,107,107,.4); }
+.card-fav-btn.fav-active { background:rgba(255,107,107,.2); border-color:#ff6b6b; }
+.card-btn { flex:1; }
+</style>
+
+<script>
+'use strict';
+
+/* ── localStorage yardımcıları ── */
+const CART_KEY = 'nexus-cart';
+const FAV_KEY  = 'nexus-favorites';
+const getCart = () => { try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; } catch { return []; } };
+const getFavs = () => { try { return JSON.parse(localStorage.getItem(FAV_KEY))  || []; } catch { return []; } };
+const saveCart = c => localStorage.setItem(CART_KEY, JSON.stringify(c));
+const saveFavs = f => localStorage.setItem(FAV_KEY,  JSON.stringify(f));
+
+/* ── Rozet güncelle ── */
+function updateBadges() {
+  const cb = document.getElementById('cart-count');
+  const fb = document.getElementById('fav-count');
+  const cc = getCart().length, fc = getFavs().length;
+  if (cb) { cb.textContent = cc; cb.classList.toggle('hidden', cc === 0); if(cc>0){cb.classList.add('bump');setTimeout(()=>cb.classList.remove('bump'),300);} }
+  if (fb) { fb.textContent = fc; fb.classList.toggle('hidden', fc === 0); if(fc>0){fb.classList.add('bump');setTimeout(()=>fb.classList.remove('bump'),300);} }
+}
+
+/* ── Toast ── */
+let toastT;
+function showToast(msg) {
+  const t = document.getElementById('cart-toast');
+  const m = document.getElementById('toast-msg');
+  if (!t) return;
+  if (m) m.textContent = msg;
+  clearTimeout(toastT);
+  t.classList.add('show');
+  toastT = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+/* ── Panel render ── */
+function brandEmoji(b) { return {apple:'🍎',samsung:'📱',xiaomi:'📲',google:'🔍'}[b] || '📦'; }
+
+function renderCartPanel() {
+  const body = document.getElementById('cart-body');
+  const foot = document.getElementById('cart-footer');
+  const cart = getCart();
+  if (!body) return;
+  if (!cart.length) {
+    body.innerHTML = '<div class="panel-empty"><span>🛒</span><p>Sepetiniz boş.</p></div>';
+    if (foot) foot.style.display = 'none'; return;
+  }
+  body.innerHTML = cart.map(i => `
+    <div class="panel-item">
+      <div class="panel-item-icon">${brandEmoji(i.brand)}</div>
+      <div class="panel-item-info"><strong>${i.name}</strong><span>₺${i.price.toLocaleString('tr-TR')}</span></div>
+      <button class="panel-item-remove" data-id="${i.id}" data-type="cart">✕</button>
+    </div>`).join('');
+  const total = cart.reduce((s,i)=>s+i.price,0);
+  const tp = document.getElementById('cart-total-price');
+  if (tp) tp.textContent = '₺' + total.toLocaleString('tr-TR');
+  if (foot) foot.style.display = 'flex';
+}
+
+function renderFavPanel() {
+  const body = document.getElementById('fav-body');
+  const foot = document.getElementById('fav-footer');
+  const favs = getFavs();
+  if (!body) return;
+  if (!favs.length) {
+    body.innerHTML = '<div class="panel-empty"><span>❤️</span><p>Henüz favori eklemediniz.</p></div>';
+    if (foot) foot.style.display = 'none'; return;
+  }
+  body.innerHTML = favs.map(i => `
+    <div class="panel-item">
+      <div class="panel-item-icon">${brandEmoji(i.brand)}</div>
+      <div class="panel-item-info"><strong>${i.name}</strong><span>₺${i.price.toLocaleString('tr-TR')}</span></div>
+      <button class="panel-item-remove" data-id="${i.id}" data-type="fav">✕</button>
+    </div>`).join('');
+  if (foot) foot.style.display = 'flex';
+}
+
+/* ── Panel aç/kapat ── */
+function openPanel(id, fn) { fn(); document.getElementById(id).classList.add('open'); document.body.style.overflow='hidden'; }
+function closePanel(id)    { document.getElementById(id).classList.remove('open'); document.body.style.overflow=''; }
+
+document.getElementById('open-cart-btn').addEventListener('click', () => openPanel('cart-overlay', renderCartPanel));
+document.getElementById('open-fav-btn').addEventListener('click',  () => openPanel('fav-overlay',  renderFavPanel));
+document.getElementById('close-cart-btn').addEventListener('click', () => closePanel('cart-overlay'));
+document.getElementById('close-fav-btn').addEventListener('click',  () => closePanel('fav-overlay'));
+['cart-overlay','fav-overlay'].forEach(id => {
+  document.getElementById(id).addEventListener('click', e => { if(e.target.id===id) closePanel(id); });
+});
+
+/* ── Panelden öğe kaldır ── */
+document.addEventListener('click', e => {
+  const btn = e.target.closest('.panel-item-remove');
+  if (!btn) return;
+  const id = Number(btn.dataset.id), type = btn.dataset.type;
+  if (type === 'cart') { saveCart(getCart().filter(i=>i.id!==id)); renderCartPanel(); }
+  else                 { saveFavs(getFavs().filter(i=>i.id!==id)); renderFavPanel(); }
+  syncCards(); updateBadges();
+});
+
+document.getElementById('cart-clear-btn').addEventListener('click', () => { saveCart([]); renderCartPanel(); syncCards(); updateBadges(); });
+document.getElementById('fav-clear-btn').addEventListener('click',  () => { saveFavs([]); renderFavPanel();  syncCards(); updateBadges(); });
+
+/* ── Kartları localStorage'a göre senkronize et ── */
+function syncCards() {
+  const cart = getCart(), favs = getFavs();
+  document.querySelectorAll('.product-card[data-id]').forEach(card => {
+    const id = Number(card.dataset.id);
+    const inCart = cart.some(i=>i.id===id), inFav = favs.some(i=>i.id===id);
+    const cb = card.querySelector('.card-btn');
+    const fb = card.querySelector('.card-fav-btn');
+    if (cb) { cb.textContent = inCart ? '✓ Sepette' : 'Sepete Ekle'; cb.style.background = inCart ? 'rgba(0,212,255,0.15)' : ''; cb.style.color = inCart ? 'var(--accent)' : ''; }
+    if (fb) { fb.classList.toggle('fav-active', inFav); fb.textContent = inFav ? '❤️' : '♡'; }
+  });
+}
+
+/* ── Kart oluştur ── */
+function createCard(p) {
+  const card = document.createElement('div');
+  card.className = 'product-card reveal';
+  card.dataset.brand = p.brand; card.dataset.price = p.price; card.dataset.name = p.name; card.dataset.id = p.id;
+  const badge = p.badge ? `<div class="card-badge ${p.badgeClass||''}">${p.badge}</div>` : '';
+  const specs = p.specs.map(s=>`<span>${s}</span>`).join('');
+  card.innerHTML = `
+    ${badge}
+    <div class="card-img"><div class="phone-silhouette ${p.silhouette}" style="${p.style}"></div></div>
+    <div class="card-info">
+      <div class="card-brand">${p.brand.charAt(0).toUpperCase()+p.brand.slice(1)}</div>
+      <h3 class="card-name">${p.name}</h3>
+      <div class="card-specs">${specs}</div>
+      <div class="card-footer">
+        <span class="card-price">₺${p.price.toLocaleString('tr-TR')}</span>
+        <div class="card-actions">
+          <button class="card-fav-btn" title="Favorilere Ekle">♡</button>
+          <button class="card-btn">Sepete Ekle</button>
+        </div>
+      </div>
+    </div>`;
+
+  /* Sepete Ekle */
+  card.querySelector('.card-btn').addEventListener('click', () => {
+    let cart = getCart();
+    if (cart.some(i=>i.id===p.id)) { saveCart(cart.filter(i=>i.id!==p.id)); showToast(`"${p.name}" sepetten çıkarıldı.`); }
+    else { cart.push({id:p.id,name:p.name,brand:p.brand,price:p.price}); saveCart(cart); showToast(`"${p.name}" sepete eklendi! 🛒`); }
+    syncCards(); updateBadges();
+  });
+
+  /* Favorilere Ekle */
+  card.querySelector('.card-fav-btn').addEventListener('click', () => {
+    let favs = getFavs();
+    if (favs.some(i=>i.id===p.id)) { saveFavs(favs.filter(i=>i.id!==p.id)); showToast(`"${p.name}" favorilerden çıkarıldı.`); }
+    else { favs.push({id:p.id,name:p.name,brand:p.brand,price:p.price}); saveFavs(favs); showToast(`"${p.name}" favorilere eklendi! ❤️`); }
+    syncCards(); updateBadges();
+  });
+
+  return card;
+}
+
+/* ── JSON'dan ürünleri yükle ve kartları oluştur ── */
+async function loadProducts() {
+  const grid = document.getElementById('shop-grid');
+  if (!grid) return;
+  try {
+    const res = await fetch('products.json');
+    if (!res.ok) throw new Error();
+    const products = await res.json();
+
+    grid.innerHTML = '';
+    products.forEach(p => grid.appendChild(createCard(p)));
+
+    /* Değerlendirme formu select'ini JSON'dan doldur */
+    const sel = document.getElementById('rv-product');
+    if (sel) {
+      products.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p.name; opt.textContent = p.name;
+        sel.appendChild(opt);
+      });
+    }
+
+    syncCards();
+    updateBadges();
+
+    /* Scroll reveal */
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          const sibs = Array.from(e.target.parentElement.querySelectorAll('.reveal:not(.visible)'));
+          setTimeout(() => e.target.classList.add('visible'), sibs.indexOf(e.target) * 80);
+          obs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.08, rootMargin:'0px 0px -40px 0px' });
+
+    grid.querySelectorAll('.reveal').forEach(el => {
+      el.getBoundingClientRect().top < window.innerHeight * 0.9 ? el.classList.add('visible') : obs.observe(el);
+    });
+
+    /* Tilt efekti */
+    grid.querySelectorAll('.product-card').forEach(card => {
+      card.addEventListener('mousemove', e => {
+        const {left,top,width,height} = card.getBoundingClientRect();
+        card.style.transform = `translateY(-6px) rotateX(${((e.clientY-top-height/2)/(height/2))*-5}deg) rotateY(${((e.clientX-left-width/2)/(width/2))*5}deg)`;
+      });
+      card.addEventListener('mouseleave', () => { card.style.transform=''; card.style.transition='transform .5s ease'; setTimeout(()=>card.style.transition='',500); });
+    });
+
+    /* Filtre & Sıralama */
+    let curFilter = 'all', curSort = 'default';
+    function rerender() {
+      let list = products.filter(p => curFilter==='all' || p.brand===curFilter);
+      if (curSort==='price-asc')  list.sort((a,b)=>a.price-b.price);
+      if (curSort==='price-desc') list.sort((a,b)=>b.price-a.price);
+      if (curSort==='name')       list.sort((a,b)=>a.name.localeCompare(b.name));
+      grid.innerHTML = '';
+      list.forEach(p => { const c=createCard(p); c.classList.add('visible'); grid.appendChild(c); });
+      syncCards();
+    }
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active'); curFilter = btn.dataset.filter; rerender();
+      });
+    });
+    const ss = document.getElementById('sort-select');
+    if (ss) ss.addEventListener('change', () => { curSort = ss.value; rerender(); });
+
+  } catch {
+    grid.innerHTML = '<p style="color:var(--text-muted);padding:2rem">Ürünler yüklenemedi.</p>';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', loadProducts);
+</script>
+
   <script src="script.js"></script>
 </body>
 </html>
