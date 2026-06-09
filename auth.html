@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Giriş / Kayıt — NEXUS</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml"/>
+  <meta name="description" content="NEXUS hesabınıza giriş yapın veya yeni hesap oluşturun."/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    .auth-page { min-height: 100vh; display:flex; align-items:center; justify-content:center; padding: 6rem 1.5rem 3rem; }
+    .auth-card { background:var(--card-bg); border:1px solid var(--border); border-radius:24px; width:100%; max-width:480px; padding:2.5rem; }
+    .auth-logo  { text-align:center; margin-bottom:2rem; font-family:'Syne',sans-serif; font-size:2rem; font-weight:800; }
+    .auth-logo span { color:var(--accent); }
+    .auth-tabs  { display:flex; background:rgba(255,255,255,0.04); border-radius:12px; padding:4px; margin-bottom:2rem; gap:4px; }
+    .auth-tab   { flex:1; padding:10px; border:none; border-radius:9px; cursor:pointer; font-family:'Syne',sans-serif; font-size:14px; font-weight:600; color:var(--text-muted); background:none; transition:.2s; }
+    .auth-tab.active { background:var(--accent); color:#000; }
+    .auth-form  { display:none; flex-direction:column; gap:16px; }
+    .auth-form.active { display:flex; }
+    .auth-group label { display:block; font-size:13px; color:var(--text-muted); margin-bottom:6px; }
+    .auth-input { width:100%; padding:12px 14px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:12px; color:var(--text); font-size:15px; font-family:'DM Sans',sans-serif; box-sizing:border-box; transition:.2s; }
+    .auth-input:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(0,212,255,0.1); }
+    .auth-btn { width:100%; padding:14px; background:var(--accent); color:#000; border:none; border-radius:12px; font-family:'Syne',sans-serif; font-size:15px; font-weight:700; cursor:pointer; transition:.2s; margin-top:4px; }
+    .auth-btn:hover { opacity:0.9; transform:translateY(-1px); }
+    .auth-btn:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
+    .auth-error   { background:rgba(255,80,80,0.12); border:1px solid rgba(255,80,80,0.3); border-radius:10px; padding:10px 14px; font-size:14px; color:#ff6b6b; display:none; }
+    .auth-success { background:rgba(0,212,100,0.12); border:1px solid rgba(0,212,100,0.3); border-radius:10px; padding:10px 14px; font-size:14px; color:#00d464; display:none; }
+    .auth-back  { display:block; text-align:center; margin-top:1.5rem; font-size:13px; color:var(--text-muted); }
+    .auth-back a { color:var(--accent); text-decoration:none; }
+    .auth-back a:hover { text-decoration:underline; }
+    .pw-toggle  { position:relative; }
+    .pw-toggle input { padding-right:44px; }
+    .pw-eye     { position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:16px; padding:4px; }
+  </style>
+</head>
+<body>
+
+<nav class="navbar" id="navbar">
+  <a href="index.html" class="logo">NEX<span>US</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Ana Sayfa</a></li>
+    <li><a href="products.html">Ürünler</a></li>
+    <li><a href="about.html">Hakkımızda</a></li>
+    <li><a href="contact.html">İletişim</a></li>
+  </ul>
+  <button class="nav-dark-toggle" title="Tema Değiştir">🌙</button>
+  <div class="burger" id="burger"><span></span><span></span><span></span></div>
+</nav>
+<div class="mobile-menu" id="mobile-menu">
+  <ul>
+    <li><a href="index.html">Ana Sayfa</a></li>
+    <li><a href="products.html">Ürünler</a></li>
+    <li><a href="about.html">Hakkımızda</a></li>
+    <li><a href="contact.html">İletişim</a></li>
+  </ul>
+</div>
+
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-logo">NEX<span>US</span></div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-login"  onclick="switchTab('login')">Giriş Yap</button>
+      <button class="auth-tab"        id="tab-register" onclick="switchTab('register')">Kayıt Ol</button>
+    </div>
+
+    <!-- GİRİŞ FORMU -->
+    <form class="auth-form active" id="login-form" novalidate>
+      <div id="login-error"   class="auth-error"></div>
+      <div id="login-success" class="auth-success"></div>
+
+      <div class="auth-group">
+        <label for="l-email">E-posta *</label>
+        <input type="email" id="l-email" class="auth-input" placeholder="ornek@email.com" required/>
+      </div>
+      <div class="auth-group">
+        <label for="l-pass">Şifre *</label>
+        <div class="pw-toggle">
+          <input type="password" id="l-pass" class="auth-input" placeholder="••••••••" required/>
+          <button type="button" class="pw-eye" onclick="togglePw('l-pass',this)">👁</button>
+        </div>
+      </div>
+      <button type="submit" class="auth-btn" id="login-btn">Giriş Yap</button>
+    </form>
+
+    <!-- KAYIT FORMU -->
+    <form class="auth-form" id="register-form" novalidate>
+      <div id="reg-error"   class="auth-error"></div>
+      <div id="reg-success" class="auth-success"></div>
+
+      <div class="auth-group">
+        <label for="r-name">Ad Soyad *</label>
+        <input type="text" id="r-name" class="auth-input" placeholder="Adınız Soyadınız" required/>
+      </div>
+      <div class="auth-group">
+        <label for="r-email">E-posta *</label>
+        <input type="email" id="r-email" class="auth-input" placeholder="ornek@email.com" required/>
+      </div>
+      <div class="auth-group">
+        <label for="r-pass">Şifre * (en az 6 karakter)</label>
+        <div class="pw-toggle">
+          <input type="password" id="r-pass" class="auth-input" placeholder="••••••••" required minlength="6"/>
+          <button type="button" class="pw-eye" onclick="togglePw('r-pass',this)">👁</button>
+        </div>
+      </div>
+      <div class="auth-group">
+        <label for="r-pass2">Şifre Tekrar *</label>
+        <div class="pw-toggle">
+          <input type="password" id="r-pass2" class="auth-input" placeholder="••••••••" required/>
+          <button type="button" class="pw-eye" onclick="togglePw('r-pass2',this)">👁</button>
+        </div>
+      </div>
+      <button type="submit" class="auth-btn" id="reg-btn">Kayıt Ol</button>
+    </form>
+
+    <span class="auth-back"><a href="index.html">← Ana Sayfaya Dön</a></span>
+  </div>
+</div>
+
+<button class="dark-mode-btn" title="Tema Değiştir">🌙</button>
+
+<script src="script.js"></script>
+<script>
+'use strict';
+
+function switchTab(tab) {
+  document.getElementById('login-form').classList.toggle('active', tab === 'login');
+  document.getElementById('register-form').classList.toggle('active', tab === 'register');
+  document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+  document.getElementById('tab-register').classList.toggle('active', tab === 'register');
+}
+
+function togglePw(inputId, btn) {
+  const inp = document.getElementById(inputId);
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+  btn.textContent = inp.type === 'password' ? '👁' : '🙈';
+}
+
+function showMsg(elId, msg, isError) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+function hideMsg(elId) {
+  const el = document.getElementById(elId);
+  if (el) el.style.display = 'none';
+}
+
+/* ── Giriş ── */
+document.getElementById('login-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  hideMsg('login-error'); hideMsg('login-success');
+  const btn = document.getElementById('login-btn');
+  btn.disabled = true; btn.textContent = 'Giriş yapılıyor...';
+
+  const body = {
+    email:    document.getElementById('l-email').value,
+    password: document.getElementById('l-pass').value,
+  };
+
+  try {
+    const res  = await fetch('login.php', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+    const data = await res.json();
+    if (data.success) {
+      showMsg('login-success', '✓ ' + data.message + ' Yönlendiriliyor...', false);
+      setTimeout(() => window.location.href = 'index.html', 1500);
+    } else {
+      showMsg('login-error', data.message, true);
+    }
+  } catch {
+    showMsg('login-error', 'Sunucuya bağlanılamadı.', true);
+  } finally {
+    btn.disabled = false; btn.textContent = 'Giriş Yap';
+  }
+});
+
+/* ── Kayıt ── */
+document.getElementById('register-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  hideMsg('reg-error'); hideMsg('reg-success');
+  const btn = document.getElementById('reg-btn');
+  btn.disabled = true; btn.textContent = 'Kayıt yapılıyor...';
+
+  const body = {
+    name:             document.getElementById('r-name').value,
+    email:            document.getElementById('r-email').value,
+    password:         document.getElementById('r-pass').value,
+    password_confirm: document.getElementById('r-pass2').value,
+  };
+
+  if (body.password !== body.password_confirm) {
+    showMsg('reg-error', 'Şifreler eşleşmiyor.', true);
+    btn.disabled = false; btn.textContent = 'Kayıt Ol';
+    return;
+  }
+
+  try {
+    const res  = await fetch('register.php', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+    const data = await res.json();
+    if (data.success) {
+      showMsg('reg-success', '✓ ' + data.message, false);
+      document.getElementById('register-form').reset();
+      setTimeout(() => switchTab('login'), 2000);
+    } else {
+      showMsg('reg-error', data.message, true);
+    }
+  } catch {
+    showMsg('reg-error', 'Sunucuya bağlanılamadı.', true);
+  } finally {
+    btn.disabled = false; btn.textContent = 'Kayıt Ol';
+  }
+});
+</script>
+</body>
+</html>
