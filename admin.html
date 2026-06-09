@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel — NEXUS</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    .admin-page { min-height:100vh; padding:6rem 1.5rem 3rem; max-width:1100px; margin:0 auto; }
+    .admin-title { font-family:'Syne',sans-serif; font-size:2rem; font-weight:800; margin-bottom:.5rem; }
+    .admin-title span { color:var(--accent); }
+    .admin-tabs { display:flex; gap:8px; margin:2rem 0 1.5rem; flex-wrap:wrap; }
+    .atab { padding:9px 20px; border-radius:99px; border:1px solid var(--border); background:none; color:var(--text-muted); font-family:'Syne',sans-serif; font-size:13px; font-weight:600; cursor:pointer; transition:.2s; }
+    .atab.active { background:var(--accent); color:#000; border-color:var(--accent); }
+    .atab-content { display:none; }
+    .atab-content.active { display:block; }
+    .data-table { width:100%; border-collapse:collapse; }
+    .data-table th { text-align:left; font-size:12px; color:var(--text-muted); font-weight:500; padding:10px 14px; border-bottom:1px solid var(--border); text-transform:uppercase; letter-spacing:.05em; }
+    .data-table td { padding:12px 14px; border-bottom:1px solid rgba(255,255,255,0.04); font-size:14px; vertical-align:top; }
+    .data-table tr:hover td { background:rgba(255,255,255,0.03); }
+    .badge-sub { font-size:12px; color:var(--text-muted); display:block; margin-top:2px; }
+    .stat-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:14px; margin-bottom:2rem; }
+    .stat-box { background:var(--card-bg); border:1px solid var(--border); border-radius:16px; padding:1.2rem; }
+    .stat-box .num { font-family:'Syne',sans-serif; font-size:2rem; font-weight:700; color:var(--accent); }
+    .stat-box .lbl { font-size:13px; color:var(--text-muted); margin-top:4px; }
+    .table-wrap { background:var(--card-bg); border:1px solid var(--border); border-radius:16px; overflow:hidden; }
+    .table-header { padding:1rem 1.25rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+    .table-header h4 { font-family:'Syne',sans-serif; font-size:1rem; margin:0; }
+    .refresh-btn { background:none; border:1px solid var(--border); border-radius:8px; padding:6px 14px; color:var(--text-muted); font-size:13px; cursor:pointer; transition:.2s; }
+    .refresh-btn:hover { border-color:var(--accent); color:var(--accent); }
+    .empty-row { text-align:center; padding:3rem; color:var(--text-muted); }
+    .del-btn { background:rgba(255,80,80,0.1); border:1px solid rgba(255,80,80,0.2); color:#ff6b6b; font-size:12px; padding:4px 10px; border-radius:6px; cursor:pointer; transition:.2s; }
+    .del-btn:hover { background:rgba(255,80,80,0.2); }
+    .loading-row td { text-align:center; padding:2rem; color:var(--text-muted); }
+    .star { color:#f0c040; }
+    .warn-box { background:rgba(255,200,0,0.08); border:1px solid rgba(255,200,0,0.2); border-radius:12px; padding:1rem 1.25rem; margin-bottom:1.5rem; font-size:14px; color:#f0c040; }
+  </style>
+</head>
+<body>
+
+<nav class="navbar" id="navbar">
+  <a href="index.html" class="logo">NEX<span>US</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Ana Sayfa</a></li>
+    <li><a href="products.html">Ürünler</a></li>
+    <li><a href="about.html">Hakkımızda</a></li>
+    <li><a href="contact.html">İletişim</a></li>
+  </ul>
+  <button class="nav-dark-toggle" title="Tema Değiştir">🌙</button>
+</nav>
+
+<div class="admin-page">
+  <div class="admin-title">Admin <span>Paneli</span></div>
+  <p style="color:var(--text-muted);font-size:14px">Veritabanı verileri burada listelenir. PHP sunucusu gerektirir.</p>
+
+  <div class="warn-box">
+    ⚠️ Bu sayfa sadece localhost / PHP sunucusunda çalışır. Doğrudan tarayıcıda açarsanız veriler görünmez.
+  </div>
+
+  <div class="stat-row">
+    <div class="stat-box"><div class="num" id="stat-users">—</div><div class="lbl">Kayıtlı Kullanıcı</div></div>
+    <div class="stat-box"><div class="num" id="stat-msgs">—</div><div class="lbl">İletişim Mesajı</div></div>
+    <div class="stat-box"><div class="num" id="stat-reviews">—</div><div class="lbl">Ürün Yorumu</div></div>
+  </div>
+
+  <div class="admin-tabs">
+    <button class="atab active" onclick="switchAdminTab('messages')">📩 Mesajlar</button>
+    <button class="atab" onclick="switchAdminTab('users')">👤 Kullanıcılar</button>
+    <button class="atab" onclick="switchAdminTab('reviews')">⭐ Yorumlar</button>
+  </div>
+
+  <!-- MESAJLAR -->
+  <div class="atab-content active" id="tab-messages">
+    <div class="table-wrap">
+      <div class="table-header">
+        <h4>İletişim Mesajları</h4>
+        <button class="refresh-btn" onclick="loadMessages()">↻ Yenile</button>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="data-table">
+          <thead><tr><th>#</th><th>Ad Soyad</th><th>E-posta</th><th>Konu</th><th>Mesaj</th><th>Tarih</th><th></th></tr></thead>
+          <tbody id="messages-body"><tr><td colspan="7" class="loading-row">Yükleniyor...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- KULLANICILAR -->
+  <div class="atab-content" id="tab-users">
+    <div class="table-wrap">
+      <div class="table-header">
+        <h4>Kayıtlı Kullanıcılar</h4>
+        <button class="refresh-btn" onclick="loadUsers()">↻ Yenile</button>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="data-table">
+          <thead><tr><th>#</th><th>Ad</th><th>E-posta</th><th>Kayıt Tarihi</th></tr></thead>
+          <tbody id="users-body"><tr><td colspan="4" class="loading-row">Yükleniyor...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- YORUMLAR -->
+  <div class="atab-content" id="tab-reviews">
+    <div class="table-wrap">
+      <div class="table-header">
+        <h4>Ürün Değerlendirmeleri</h4>
+        <button class="refresh-btn" onclick="loadReviews()">↻ Yenile</button>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="data-table">
+          <thead><tr><th>#</th><th>Ürün</th><th>Kişi</th><th>Puan</th><th>Yorum</th><th>Tarih</th><th></th></tr></thead>
+          <tbody id="reviews-body"><tr><td colspan="7" class="loading-row">Yükleniyor...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<button class="dark-mode-btn" title="Tema Değiştir">🌙</button>
+<script src="script.js"></script>
+<script>
+'use strict';
+
+function switchAdminTab(name) {
+  document.querySelectorAll('.atab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.atab').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function fmtDate(str) {
+  if (!str) return '—';
+  return new Date(str).toLocaleString('tr-TR', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+}
+
+function stars(n) {
+  return '★'.repeat(n) + '☆'.repeat(5-n);
+}
+
+async function loadMessages() {
+  const tb = document.getElementById('messages-body');
+  tb.innerHTML = '<tr><td colspan="7" class="loading-row">Yükleniyor...</td></tr>';
+  try {
+    const data = await fetch('contact_api.php').then(r=>r.json());
+    document.getElementById('stat-msgs').textContent = data.total ?? '—';
+    if (!data.messages?.length) { tb.innerHTML = '<tr><td colspan="7" class="empty-row">Henüz mesaj yok.</td></tr>'; return; }
+    tb.innerHTML = data.messages.map(m => `
+      <tr>
+        <td>${m.id}</td>
+        <td>${m.fname} ${m.lname}</td>
+        <td><a href="mailto:${m.email}" style="color:var(--accent)">${m.email}</a></td>
+        <td>${m.subject}</td>
+        <td>${m.excerpt}${m.excerpt?.length >= 120 ? '…' : ''}</td>
+        <td style="white-space:nowrap">${fmtDate(m.created_at)}</td>
+        <td><button class="del-btn" onclick="deleteRecord('contact_messages',${m.id},this)">Sil</button></td>
+      </tr>`).join('');
+  } catch { tb.innerHTML = '<tr><td colspan="7" class="empty-row">PHP sunucusu bulunamadı.</td></tr>'; }
+}
+
+async function loadUsers() {
+  const tb = document.getElementById('users-body');
+  tb.innerHTML = '<tr><td colspan="4" class="loading-row">Yükleniyor...</td></tr>';
+  try {
+    const data = await fetch('users_api.php').then(r=>r.json());
+    document.getElementById('stat-users').textContent = data.total ?? '—';
+    if (!data.users?.length) { tb.innerHTML = '<tr><td colspan="4" class="empty-row">Henüz kullanıcı yok.</td></tr>'; return; }
+    tb.innerHTML = data.users.map(u => `
+      <tr>
+        <td>${u.id}</td>
+        <td>${u.name}</td>
+        <td>${u.email}</td>
+        <td>${fmtDate(u.created_at)}</td>
+      </tr>`).join('');
+  } catch { tb.innerHTML = '<tr><td colspan="4" class="empty-row">PHP sunucusu bulunamadı.</td></tr>'; }
+}
+
+async function loadReviews() {
+  const tb = document.getElementById('reviews-body');
+  tb.innerHTML = '<tr><td colspan="7" class="loading-row">Yükleniyor...</td></tr>';
+  try {
+    const data = await fetch('reviews_api.php').then(r=>r.json());
+    document.getElementById('stat-reviews').textContent = data.total ?? '—';
+    if (!data.reviews?.length) { tb.innerHTML = '<tr><td colspan="7" class="empty-row">Henüz yorum yok.</td></tr>'; return; }
+    tb.innerHTML = data.reviews.map(r => `
+      <tr>
+        <td>${r.id}</td>
+        <td>${r.product}</td>
+        <td>${r.reviewer}</td>
+        <td><span class="star">${stars(r.rating)}</span></td>
+        <td><strong>${r.title}</strong><span class="badge-sub">${r.comment.substring(0,80)}…</span></td>
+        <td style="white-space:nowrap">${fmtDate(r.created_at)}</td>
+        <td><button class="del-btn" onclick="deleteRecord('reviews',${r.id},this)">Sil</button></td>
+      </tr>`).join('');
+  } catch { tb.innerHTML = '<tr><td colspan="7" class="empty-row">PHP sunucusu bulunamadı.</td></tr>'; }
+}
+
+async function deleteRecord(table, id, btn) {
+  if (!confirm('Bu kaydı silmek istediğinize emin misiniz?')) return;
+  btn.disabled = true; btn.textContent = '...';
+  try {
+    const res = await fetch('delete_api.php', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({table, id})
+    });
+    const data = await res.json();
+    if (data.success) { btn.closest('tr').remove(); }
+    else { btn.disabled = false; btn.textContent = 'Sil'; alert(data.message); }
+  } catch { btn.disabled = false; btn.textContent = 'Sil'; }
+}
+
+// Sayfa açılınca tüm verileri yükle
+loadMessages();
+loadUsers();
+loadReviews();
+</script>
+</body>
+</html>
