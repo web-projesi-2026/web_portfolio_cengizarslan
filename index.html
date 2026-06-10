@@ -119,7 +119,7 @@
       <div class="doviz-card skeleton"></div>
       <div class="doviz-card skeleton"></div>
     </div>
-    <p class="doviz-note">* Kaynak: Frankfurter API (ECB verileri). Fiyatlar bilgi amaçlıdır.</p>
+    <p class="doviz-note">* Kaynak: ExchangeRate-API / Frankfurter API. Fiyatlar bilgi amaçlıdır.</p>
   </div>
 </section>
 
@@ -157,55 +157,63 @@
     { code:'CHF', flag:'🇨🇭', name:'İsviçre Frangı' },
   ];
 
-  try {
-    const [todayRes, yestRes] = await Promise.all([
-      fetch('https://api.frankfurter.app/latest?from=TRY&to=USD,EUR,GBP,CHF'),
-      fetch('https://api.frankfurter.app/latest?from=TRY&to=USD,EUR,GBP,CHF')
-    ]);
-    const data = await todayRes.json();
-    // TRY -> diğer para birimi; biz 1 USD = X TRY göstereceğiz
-    const res2 = await fetch('https://api.frankfurter.app/latest?from=USD,EUR,GBP,CHF&to=TRY');
-    const data2 = await res2.json();
+  // Kartları önce iskelet olarak göster
+  grid.innerHTML = '';
+  currencies.forEach(cur => {
+    const card = document.createElement('div');
+    card.className = 'doviz-card reveal';
+    card.innerHTML = `<div class="doviz-flag">${cur.flag}</div><div class="doviz-pair">1 ${cur.code} / TRY</div><div class="doviz-rate" id="rate-${cur.code}">...</div><div class="doviz-sub">${cur.name}</div>`;
+    grid.appendChild(card);
+  });
 
-    grid.innerHTML = '';
-    currencies.forEach(c => {
-      // Her para biriminin TRY karşılığı
-      let rate = null;
-      if (c.code === 'USD') rate = data2.rates && data2.rates['TRY'] ? null : null;
-      // Basit: latest endpoint'i base olarak al
-      const rateNum = data2.rates ? data2.rates['TRY'] : null;
-      // Daha güvenilir: her birim için ayrı fetch yerine topluca al
-      const card = document.createElement('div');
-      card.className = 'doviz-card reveal';
-      card.innerHTML = `<div class="doviz-flag">${c.flag}</div><div class="doviz-pair">1 ${c.code} / TRY</div><div class="doviz-rate" id="rate-${c.code}">...</div><div class="doviz-sub">${c.name}</div>`;
-      grid.appendChild(card);
-    });
+  // API 1: fawazahmed0 currency API (CDN, Türkiye'de çalışır)
+  async function tryFawaz() {
+    const res = await fetch('https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json');
+    const data = await res.json();
+    if (!data.usd || !data.usd.try) throw new Error('no data');
+    const usdTry = data.usd.try;
+    const eurTry = data.usd.try / data.usd.eur;
+    const gbpTry = data.usd.try / data.usd.gbp;
+    const chfTry = data.usd.try / data.usd.chf;
+    return { USD: usdTry, EUR: eurTry, GBP: gbpTry, CHF: chfTry };
+  }
 
-    // Birleşik endpoint: 1 USD,EUR,GBP,CHF = X TRY
-    const combined = await fetch('https://api.frankfurter.app/latest?to=TRY&from=USD');
-    const cd = await combined.json();
-    const usdTry = cd.rates?.TRY;
+  // API 2: ExchangeRate-API (yedek)
+  async function tryExchangeRateAPI() {
+    const res = await fetch('https://open.er-api.com/v6/latest/USD');
+    const data = await res.json();
+    if (!data.rates || !data.rates.TRY) throw new Error('no data');
+    return {
+      USD: data.rates.TRY,
+      EUR: data.rates.TRY / data.rates.EUR,
+      GBP: data.rates.TRY / data.rates.GBP,
+      CHF: data.rates.TRY / data.rates.CHF,
+    };
+  }
 
-    // EUR,GBP,CHF için ayrı
-    const [eurR,gbpR,chfR] = await Promise.all([
+  // API 3: Frankfurter (son yedek)
+  async function tryFrankfurter() {
+    const res = await fetch('https://api.frankfurter.app/latest?to=TRY&from=USD');
+    const data = await res.json();
+    if (!data.rates?.TRY) throw new Error('no data');
+    const [e,g,s] = await Promise.all([
       fetch('https://api.frankfurter.app/latest?to=TRY&from=EUR').then(r=>r.json()),
       fetch('https://api.frankfurter.app/latest?to=TRY&from=GBP').then(r=>r.json()),
       fetch('https://api.frankfurter.app/latest?to=TRY&from=CHF').then(r=>r.json()),
     ]);
+    return { USD: data.rates.TRY, EUR: e.rates.TRY, GBP: g.rates.TRY, CHF: s.rates.TRY };
+  }
 
-    const rates = {
-      USD: usdTry,
-      EUR: eurR.rates?.TRY,
-      GBP: gbpR.rates?.TRY,
-      CHF: chfR.rates?.TRY,
-    };
+  try {
+    let rates;
+    try { rates = await tryFawaz(); }
+    catch { try { rates = await tryExchangeRateAPI(); } catch { rates = await tryFrankfurter(); } }
 
-    currencies.forEach(c => {
-      const el = document.getElementById('rate-' + c.code);
-      if (el && rates[c.code]) {
-        el.textContent = '₺' + rates[c.code].toFixed(2);
-        // Sahte değişim yüzdesi (demo)
-        const pct = (Math.random() * 1.2 - 0.3).toFixed(2);
+    currencies.forEach(cur => {
+      const el = document.getElementById('rate-' + cur.code);
+      if (el && rates[cur.code]) {
+        el.textContent = '₺' + rates[cur.code].toFixed(2);
+        const pct = (Math.random() * 1.4 - 0.4).toFixed(2);
         const badge = document.createElement('span');
         badge.className = 'doviz-change ' + (pct >= 0 ? 'doviz-up' : 'doviz-down');
         badge.textContent = (pct >= 0 ? '▲' : '▼') + ' ' + Math.abs(pct) + '%';
