@@ -188,31 +188,22 @@
 })();
 
 /* ─────────────────────────────────────────────
-   7. ÜRÜN FİLTRESİ + ARAMA KUTUSU (Products Sayfası)
+   7. ÜRÜN FİLTRESİ (Products Sayfası)
 ───────────────────────────────────────────── */
 (function initProductFilter() {
-  const filterBtns  = document.querySelectorAll('.filter-btn');
-  const cards       = document.querySelectorAll('.product-card[data-brand]');
-  const sortSelect  = document.getElementById('sort-select');
-  const grid        = document.getElementById('shop-grid');
-  const searchInput = document.getElementById('search-input');
-  const searchClear = document.getElementById('search-clear');
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const cards      = document.querySelectorAll('.product-card[data-brand]');
+  const sortSelect = document.getElementById('sort-select');
+  const grid       = document.getElementById('shop-grid');
   if (!filterBtns.length) return;
 
   let currentFilter = 'all';
-  let currentSearch = '';
 
   function applyFilters() {
-    let visibleCount = 0;
     cards.forEach(card => {
-      const brand     = card.dataset.brand || '';
-      const name      = (card.dataset.name || card.querySelector('h3,h4,.card-name')?.textContent || '').toLowerCase();
-      const matchBrand  = currentFilter === 'all' || brand === currentFilter;
-      const matchSearch = !currentSearch || name.includes(currentSearch);
-      const visible = matchBrand && matchSearch;
-
+      const brand   = card.dataset.brand;
+      const visible = currentFilter === 'all' || brand === currentFilter;
       if (visible) {
-        visibleCount++;
         card.style.display = '';
         setTimeout(() => { card.style.opacity = '1'; card.style.transform = ''; }, 10);
       } else {
@@ -221,20 +212,6 @@
         setTimeout(() => { card.style.display = 'none'; }, 300);
       }
     });
-
-    // Sonuç bulunamadı mesajı
-    let noResult = document.getElementById('no-result-msg');
-    if (visibleCount === 0) {
-      if (!noResult) {
-        noResult = document.createElement('p');
-        noResult.id = 'no-result-msg';
-        noResult.style.cssText = 'color:var(--text-muted);padding:2rem;grid-column:1/-1;text-align:center;font-size:1.1rem';
-        noResult.textContent = '🔍 Arama kriterlerinize uygun ürün bulunamadı.';
-        grid && grid.appendChild(noResult);
-      }
-    } else {
-      noResult && noResult.remove();
-    }
   }
 
   filterBtns.forEach(btn => {
@@ -245,27 +222,6 @@
       applyFilters();
     });
   });
-
-  // Arama kutusu
-  if (searchInput) {
-    searchInput.addEventListener('input', () => {
-      currentSearch = searchInput.value.trim().toLowerCase();
-      if (searchClear) searchClear.style.display = currentSearch ? 'flex' : 'none';
-      applyFilters();
-    });
-  }
-
-  // Temizle butonu
-  if (searchClear) {
-    searchClear.style.display = 'none';
-    searchClear.addEventListener('click', () => {
-      searchInput.value = '';
-      currentSearch = '';
-      searchClear.style.display = 'none';
-      searchInput.focus();
-      applyFilters();
-    });
-  }
 
   if (sortSelect) {
     sortSelect.addEventListener('change', () => {

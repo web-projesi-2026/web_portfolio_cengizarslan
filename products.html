@@ -2,12 +2,13 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8"/>
-  <link rel="icon" href="favicon.svg" type="image/svg+xml"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Ürünler — NEXUS</title>
   
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
 
+  <link rel="icon" href="favicon.svg" type="image/svg+xml"/>
+  <meta name="description" content="NEXUS — Türkiye'nin en güvenilen premium akıllı telefon mağazası"/>
   <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
@@ -22,7 +23,7 @@
     <li><a href="about.html">Hakkımızda</a></li>
     <li><a href="contact.html">İletişim</a></li>
   </ul>
-  <button class="nav-cta">Alışveriş Yap</button>
+  <a href="auth.html" class="nav-cta" style="text-decoration:none">Giriş Yap</a>
   <!-- Sepet & Favori ikonları -->
   <button class="nav-icon-btn" id="open-cart-btn" title="Sepetim">
     🛒 <span class="nav-badge hidden" id="cart-count">0</span>
@@ -58,6 +59,15 @@
 
 <!-- FILTERS -->
 <section class="shop-section">
+  <!-- SEARCH BAR -->
+  <div class="search-bar-wrap reveal">
+    <div class="search-bar">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="search-input" class="search-input" placeholder="Ürün ara... (iPhone, Samsung, 256GB...)" autocomplete="off"/>
+      <button class="search-clear" id="search-clear" style="display:none">✕</button>
+    </div>
+    <div class="search-results-info" id="search-info"></div>
+  </div>
   <div class="filters-bar reveal">
     <div class="filter-group">
       <button class="filter-btn active" data-filter="all">Tümü</button>
@@ -65,13 +75,6 @@
       <button class="filter-btn" data-filter="samsung">Samsung</button>
       <button class="filter-btn" data-filter="xiaomi">Xiaomi</button>
       <button class="filter-btn" data-filter="google">Google</button>
-    </div>
-    <div class="search-group">
-      <div class="search-box">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-        <input type="text" id="search-input" class="search-input" placeholder="Ürün ara..."/>
-        <button class="search-clear" id="search-clear" title="Temizle">✕</button>
-      </div>
     </div>
     <div class="sort-group">
       <select class="sort-select" id="sort-select">
@@ -283,6 +286,19 @@
 </div>
 
 <style>
+/* ── Arama Kutusu ── */
+.search-bar-wrap { max-width: 700px; margin: 0 auto 2rem; padding: 0 1.5rem; }
+.search-bar { display:flex; align-items:center; gap:10px; background:var(--card-bg); border:1px solid var(--border); border-radius:14px; padding:10px 16px; transition:border-color .2s; }
+.search-bar:focus-within { border-color:var(--accent); box-shadow:0 0 0 3px rgba(0,212,255,0.08); }
+.search-icon { width:18px; height:18px; color:var(--text-muted); flex-shrink:0; }
+.search-input { flex:1; background:none; border:none; outline:none; color:var(--text); font-size:15px; font-family:'DM Sans',sans-serif; }
+.search-input::placeholder { color:var(--text-muted); }
+.search-clear { background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:16px; padding:2px 6px; border-radius:6px; }
+.search-clear:hover { color:var(--text); background:rgba(255,255,255,.08); }
+.search-results-info { font-size:13px; color:var(--text-muted); margin-top:8px; min-height:18px; }
+.no-results { text-align:center; padding:4rem 2rem; color:var(--text-muted); }
+.no-results h3 { font-size:1.2rem; margin-bottom:.5rem; }
+
 /* ── Navbar ikonları ── */
 .nav-icon-btn {
   position:relative; background:rgba(255,255,255,0.06);
@@ -563,16 +579,27 @@ async function loadProducts() {
       card.addEventListener('mouseleave', () => { card.style.transform=''; card.style.transition='transform .5s ease'; setTimeout(()=>card.style.transition='',500); });
     });
 
-    /* Filtre & Sıralama */
-    let curFilter = 'all', curSort = 'default';
+    /* Filtre, Sıralama & Arama */
+    let curFilter = 'all', curSort = 'default', curSearch = '';
     function rerender() {
-      let list = products.filter(p => curFilter==='all' || p.brand===curFilter);
+      const q = curSearch.toLowerCase().trim();
+      let list = products.filter(p => {
+        const matchBrand = curFilter==='all' || p.brand===curFilter;
+        const matchSearch = !q || p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q) || p.specs.some(s=>s.toLowerCase().includes(q));
+        return matchBrand && matchSearch;
+      });
       if (curSort==='price-asc')  list.sort((a,b)=>a.price-b.price);
       if (curSort==='price-desc') list.sort((a,b)=>b.price-a.price);
       if (curSort==='name')       list.sort((a,b)=>a.name.localeCompare(b.name));
       grid.innerHTML = '';
-      list.forEach(p => { const c=createCard(p); c.classList.add('visible'); grid.appendChild(c); });
-      syncCards();
+      if (!list.length) {
+        grid.innerHTML = '<div class="no-results"><h3>Sonuç bulunamadı</h3><p>Farklı bir arama terimi deneyin.</p></div>';
+      } else {
+        list.forEach(p => { const c=createCard(p); c.classList.add('visible'); grid.appendChild(c); });
+        syncCards();
+      }
+      const info = document.getElementById('search-info');
+      if (info) info.textContent = q ? list.length + ' ürün bulundu' : '';
     }
     document.querySelectorAll('.filter-btn').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -582,6 +609,22 @@ async function loadProducts() {
     });
     const ss = document.getElementById('sort-select');
     if (ss) ss.addEventListener('change', () => { curSort = ss.value; rerender(); });
+    /* Arama */
+    const si = document.getElementById('search-input');
+    const sc = document.getElementById('search-clear');
+    if (si) {
+      si.addEventListener('input', () => {
+        curSearch = si.value;
+        if (sc) sc.style.display = si.value ? 'block' : 'none';
+        rerender();
+      });
+    }
+    if (sc) {
+      sc.addEventListener('click', () => {
+        si.value = ''; curSearch = ''; sc.style.display = 'none';
+        si.focus(); rerender();
+      });
+    }
 
   } catch {
     grid.innerHTML = '<p style="color:var(--text-muted);padding:2rem">Ürünler yüklenemedi.</p>';

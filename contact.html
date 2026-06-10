@@ -2,12 +2,13 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8"/>
-  <link rel="icon" href="favicon.svg" type="image/svg+xml"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>İletişim — NEXUS</title>
   
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
 
+  <link rel="icon" href="favicon.svg" type="image/svg+xml"/>
+  <meta name="description" content="NEXUS — Türkiye'nin en güvenilen premium akıllı telefon mağazası"/>
   <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
@@ -22,7 +23,7 @@
     <li><a href="about.html">Hakkımızda</a></li>
     <li><a href="contact.html" class="active">İletişim</a></li>
   </ul>
-  <button class="nav-cta">Alışveriş Yap</button>
+  <a href="auth.html" class="nav-cta" style="text-decoration:none">Giriş Yap</a>
   <button class="nav-dark-toggle" title="Tema Değiştir">🌙</button>
   <div class="burger" id="burger"><span></span><span></span><span></span></div>
 </nav>
@@ -258,12 +259,8 @@
       <a href="#">İade & Değişim</a>
     </div>
     <div class="footer-contact-info">
-      <h5>İletişim</h5>
-      <p>📍 Levent, İstanbul</p>
-      <p>📞 0212 555 00 00</p>
-    </div>
+      <h5>�
   </div>
-  <div class="footer-bottom"><p>© 2025 NEXUS. Tüm hakları saklıdır.</p></div>
 </footer>
 
 
@@ -271,5 +268,42 @@
 <button class="back-to-top" id="back-to-top" title="Yukarı Çık">↑</button>
 <button class="dark-mode-btn" title="Tema Değiştir">🌙</button>
   <script src="script.js"></script>
+
+<script>
+/* İletişim formu → contact_api.php'ye gönder */
+(function() {
+  var origSubmit = window.submitForm;
+  var form = document.getElementById('contact-form');
+  if (!form) return;
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    var btn = document.getElementById('submit-btn');
+    if (btn) { btn.disabled = true; btn.querySelector('.btn-text').textContent = 'Gönderiliyor...'; }
+    var body = {
+      fname:   document.getElementById('fname')?.value   || '',
+      lname:   document.getElementById('lname')?.value   || '',
+      email:   document.getElementById('email')?.value   || '',
+      phone:   document.getElementById('phone')?.value   || '',
+      subject: document.getElementById('subject')?.value || '',
+      message: document.getElementById('message')?.value || '',
+    };
+    try {
+      var res  = await fetch('contact_api.php', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+      var data = await res.json();
+      if (data.success) {
+        document.getElementById('form-success')?.style && (document.getElementById('form-success').style.display = 'flex');
+        form.style.display = 'none';
+      } else {
+        alert('Hata: ' + data.message);
+        if (btn) { btn.disabled = false; btn.querySelector('.btn-text').textContent = 'Gönder'; }
+      }
+    } catch {
+      alert('Sunucuya bağlanılamadı. PHP sunucusu çalışıyor mu?');
+      if (btn) { btn.disabled = false; btn.querySelector('.btn-text').textContent = 'Gönder'; }
+    }
+  });
+})();
+</script>
+
 </body>
 </html>

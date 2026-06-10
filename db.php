@@ -4,7 +4,7 @@
 define('DB_HOST', 'localhost');
 define('DB_USER', 'root');       // Veritabanı kullanıcı adı
 define('DB_PASS', '');           // Veritabanı şifresi
-define('DB_NAME', 'nexus_db');   // Veritabanı adı
+define('DB_NAME', 'nexus');   // Veritabanı adı
 
 // PDO bağlantısı (güvenli, SQL injection korumalı)
 function getDB(): PDO {

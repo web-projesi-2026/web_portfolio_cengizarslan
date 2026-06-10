@@ -49,13 +49,3 @@ CREATE TABLE IF NOT EXISTS reviews (
 INSERT IGNORE INTO users (name, email, password) VALUES
 ('Demo Kullanıcı', 'demo@nexus.com',
  '$2y$12$YSfCrqI8dYLjMsPwVrqfseKFuGJUijFqTHscpIPuwMp4Kx7pMSqye');
-
--- ─── Örnek güncelleme ve silme sorguları ────────────────────
--- Değerlendirme güncelleme (UPDATE örneği)
--- UPDATE reviews SET rating = 5, comment = 'Güncellendi' WHERE id = 1;
-
--- Değerlendirme silme (DELETE örneği)
--- DELETE FROM reviews WHERE id = 1;
-
--- Kullanıcı silme (DELETE örneği)
--- DELETE FROM users WHERE email = 'ornek@email.com';

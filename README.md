@@ -1,33 +1,47 @@
-# NEXUS — Premium Phone Store
+# 📱 NEXUS — Premium Akıllı Telefon Mağazası
 
-Türkiye'nin önde gelen premium telefon mağazası için geliştirilmiş modern, tam işlevsel bir e-ticaret web sitesi.
+> Türkiye'nin en güvenilen premium telefon mağazası. Modern, responsive ve dinamik bir e-ticaret web sitesi.
 
 ---
 
 ## 🚀 Özellikler
 
-- **Ürün Listeleme** — `products.json` dosyasından dinamik olarak yüklenen ürün kartları
-- **Arama Kutusu** — Anlık ürün arama (isim bazlı filtreleme)
-- **Kategori Filtresi** — Apple, Samsung, Xiaomi, Google markalarına göre filtreleme
-- **Fiyat & İsim Sıralama** — Açılır menü ile sıralama seçeneği
-- **Kullanıcı Kayıt / Giriş** — PHP + MySQL destekli kimlik doğrulama sistemi
-- **İletişim Formu** — 3 adımlı çok adımlı form, veritabanına kaydedilir
-- **Ürün Değerlendirme** — Yıldızlı puanlama + yorum sistemi, kayıt & listeleme & silme
-- **Dark Mode** — Karanlık / aydınlık tema geçişi
-- **Responsive Tasarım** — Tüm cihaz boyutlarına uyumlu
-- **Custom Cursor** — Masaüstünde özel animasyonlu imleç
+### Kullanıcı Deneyimi
+- 🔍 **Ürün arama kutusu** — Anlık arama (isim, marka, özellik)
+- 🏷️ **Kategori filtreleme** — Apple, Samsung, Xiaomi, Google
+- 📊 **Sıralama** — Fiyata göre artan/azalan, isme göre
+- 🌙 **Dark / Light mod** — Kullanıcı tercihi kaydedilir
+- 📱 **Responsive tasarım** — Mobil, tablet, masaüstü
+
+### Dinamik Veri & API
+- 💱 **Canlı döviz kurları** — Frankfurter API (USD, EUR, GBP, CHF → TRY)
+- 📦 **JSON'dan ürün listeleme** — `products.json` dosyasından dinamik kart oluşturma
+
+### Veritabanı İşlemleri (PHP + MySQL)
+- 👤 **Kullanıcı kayıt** — Şifre bcrypt ile hashlenir
+- 🔐 **Kullanıcı girişi** — Session yönetimi
+- 📩 **İletişim formu kayıt** — Mesajlar DB'ye yazılır
+- 📋 **Veri listeleme** — Admin panelinde görüntüleme
+- 🗑️ **Veri silme** — Admin panelinden kayıt silme
+
+### Diğer
+- Özel cursor animasyonu
+- Scroll reveal animasyonları
+- Ürün modal / detay görünümü
+- Favoriler & Sepet paneli
+- Sayfa geçiş animasyonları
 
 ---
 
-## 🛠 Kullanılan Teknolojiler
+## 🛠️ Kullanılan Teknolojiler
 
-| Katman      | Teknoloji                        |
-|-------------|----------------------------------|
-| Arayüz      | HTML5, CSS3, Vanilla JavaScript  |
-| Fontlar     | Google Fonts (Syne, DM Sans)     |
-| Backend     | PHP 8+                           |
-| Veritabanı  | MySQL 5.7+ / MariaDB             |
-| Veri        | JSON (products.json)             |
+| Katman | Teknoloji |
+|--------|-----------|
+| Frontend | HTML5, CSS3, Vanilla JavaScript |
+| Backend | PHP 8+ |
+| Veritabanı | MySQL 8 / MariaDB |
+| Fontlar | Google Fonts (Syne, DM Sans) |
+| API | [Frankfurter API](https://www.frankfurter.app/) |
 
 ---
 
@@ -35,46 +49,49 @@ Türkiye'nin önde gelen premium telefon mağazası için geliştirilmiş modern
 
 ```
 nexus/
-├── index.html          # Ana sayfa
-├── products.html       # Ürünler sayfası
-├── about.html          # Hakkımızda sayfası
-├── contact.html        # İletişim sayfası
+├── index.html          # Ana sayfa (döviz widget dahil)
+├── products.html       # Ürün listesi (arama + filtre + sıralama)
+├── about.html          # Hakkımızda
+├── contact.html        # İletişim formu
 ├── auth.html           # Giriş / Kayıt sayfası
-├── style.css           # Tüm sayfalara ait stil dosyası
-├── script.js           # Tüm JavaScript etkileşimleri
+├── admin.html          # Admin paneli
+├── style.css           # Tüm stiller
+├── script.js           # Frontend JavaScript
 ├── favicon.svg         # Site ikonu
 ├── products.json       # Ürün verileri
-├── db.php              # Veritabanı bağlantı ayarları
-├── login.php           # Kullanıcı giriş API
+│
+├── db.php              # Veritabanı bağlantısı
 ├── register.php        # Kullanıcı kayıt API
-├── reviews_api.php     # Ürün değerlendirme API (GET/POST/DELETE)
-├── contact_api.php     # İletişim formu API (GET/POST)
+├── login.php           # Kullanıcı giriş API
+├── contact_api.php     # İletişim mesajları API
+├── reviews_api.php     # Ürün değerlendirme API
+├── users_api.php       # Kullanıcı listesi API (admin)
+├── delete_api.php      # Kayıt silme API (admin)
 ├── setup.sql           # Veritabanı kurulum dosyası
-└── README.md           # Bu dosya
+└── README.md
 ```
 
 ---
 
 ## ⚙️ Kurulum
 
-### 1. Veritabanı Kurulumu
+### 1. Gereksinimler
+- PHP 8.0+
+- MySQL 8.0+ veya MariaDB
+- Web sunucusu (Apache / Nginx) veya XAMPP / WAMP (local)
 
-MySQL'e bağlanıp kurulum dosyasını çalıştırın:
-
+### 2. Veritabanı Kurulumu
 ```bash
-mysql -u root -p < setup.sql
+# MySQL'e giriş yap
+mysql -u root -p
+
+# SQL dosyasını çalıştır
+source setup.sql
 ```
+veya phpMyAdmin üzerinden `setup.sql` dosyasını import edin.
 
-Bu işlem `nexus_db` veritabanını ve gerekli tabloları (`users`, `contact_messages`, `reviews`) oluşturur.
-
-Test kullanıcısı otomatik eklenir:
-- **E-posta:** `demo@nexus.com`
-- **Şifre:** `nexus123`
-
-### 2. Veritabanı Bağlantısını Yapılandır
-
-`db.php` dosyasını kendi ortamınıza göre düzenleyin:
-
+### 3. Bağlantı Ayarları
+`db.php` dosyasındaki sabitleri kendi ortamınıza göre düzenleyin:
 ```php
 define('DB_HOST', 'localhost');
 define('DB_USER', 'root');       // Kullanıcı adınız
@@ -82,51 +99,36 @@ define('DB_PASS', '');           // Şifreniz
 define('DB_NAME', 'nexus_db');
 ```
 
-### 3. Sunucuya Yükle
+### 4. Çalıştırma
+```bash
+# XAMPP kullanıyorsanız dosyaları buraya kopyalayın:
+C:/xampp/htdocs/nexus/
 
-Projeyi bir PHP destekli sunucuya (XAMPP, WAMP, LAMP veya hosting) yükleyin. Tüm dosyaları aynı dizine koyun ve tarayıcıda `index.html`'i açın.
+# Tarayıcıda açın:
+http://localhost/nexus/
+```
+
+### 5. Test Kullanıcısı
+`setup.sql` ile otomatik oluşturulan demo hesap:
+- **E-posta:** `demo@nexus.com`
+- **Şifre:** `nexus123`
 
 ---
 
-## 🗄 Veritabanı İşlemleri
+## 📸 Sayfalar
 
-| İşlem      | Dosya              | Açıklama                                |
-|------------|--------------------|-----------------------------------------|
-| INSERT     | `register.php`     | Yeni kullanıcı kaydı                    |
-| SELECT     | `login.php`        | Kullanıcı girişi doğrulama              |
-| INSERT     | `contact_api.php`  | İletişim mesajı kaydetme                |
-| SELECT     | `contact_api.php`  | İletişim mesajlarını listeleme          |
-| INSERT     | `reviews_api.php`  | Ürün değerlendirmesi ekleme             |
-| SELECT     | `reviews_api.php`  | Değerlendirmeleri listeleme + ortalama  |
-| DELETE     | `reviews_api.php`  | Değerlendirme silme (e-posta doğrulama) |
-
----
-
-## 📝 API Kullanımı
-
-### Ürün Değerlendirme
-
-```
-GET  /reviews_api.php?product=iPhone+15+Pro    → Değerlendirmeleri listele
-POST /reviews_api.php                          → Yeni değerlendirme ekle
-DELETE /reviews_api.php                        → Değerlendirme sil (body: {id, email})
-```
-
-### İletişim Formu
-
-```
-POST /contact_api.php    → Mesaj gönder
-GET  /contact_api.php    → Tüm mesajları listele (admin)
-```
+| Sayfa | Açıklama |
+|-------|----------|
+| `index.html` | Ana sayfa, hero, öne çıkan ürünler, döviz kurları |
+| `products.html` | Tüm ürünler, arama, filtre, sıralama |
+| `about.html` | Hakkımızda, ekip, tarihçe |
+| `contact.html` | İletişim formu (DB'ye kaydeder) |
+| `auth.html` | Giriş / Kayıt |
+| `admin.html` | Admin paneli — mesajlar, kullanıcılar, yorumlar |
 
 ---
 
-## 👤 Geliştirici
+## 👨‍💻 Geliştirici
 
-NEXUS projesi, web geliştirme dersi dönem ödevi kapsamında geliştirilmiştir.
-
----
-
-## 📄 Lisans
-
-Bu proje eğitim amaçlıdır.
+**NEXUS Web Projesi** — Web Programlama Final Ödevi  
+© 2025 NEXUS. Tüm hakları saklıdır.

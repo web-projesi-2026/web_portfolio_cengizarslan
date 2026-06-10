@@ -104,34 +104,5 @@ if ($method === 'POST') {
     }
 }
 
-// ── DELETE: Değerlendirme sil ────────────────────────────────
-if ($method === 'DELETE') {
-    $raw  = file_get_contents('php://input');
-    $body = json_decode($raw, true) ?? [];
-
-    $id    = (int)($body['id']    ?? 0);
-    $email = clean($body['email'] ?? '');
-
-    if ($id < 1 || empty($email)) {
-        jsonOut(false, 'Geçersiz istek. ID ve e-posta zorunludur.');
-    }
-
-    try {
-        $db   = getDB();
-        // Sadece kendi e-postasıyla eşleşen kaydı sil (güvenlik)
-        $stmt = $db->prepare('DELETE FROM reviews WHERE id = ? AND email = ?');
-        $stmt->execute([$id, $email]);
-
-        if ($stmt->rowCount() > 0) {
-            jsonOut(true, 'Değerlendirme başarıyla silindi.');
-        } else {
-            jsonOut(false, 'Değerlendirme bulunamadı veya bu işlem için yetkiniz yok.');
-        }
-
-    } catch (PDOException $e) {
-        jsonOut(false, 'Silme işlemi sırasında bir hata oluştu.');
-    }
-}
-
 jsonOut(false, 'Geçersiz istek yöntemi.');
 ?>

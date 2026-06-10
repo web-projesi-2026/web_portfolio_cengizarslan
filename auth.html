@@ -166,7 +166,7 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
     const data = await res.json();
     if (data.success) {
       showMsg('login-success', '✓ ' + data.message + ' Yönlendiriliyor...', false);
-      setTimeout(() => window.location.href = 'index.html', 1500);
+      setTimeout(() => window.location.href = 'admin.html', 1500);
     } else {
       showMsg('login-error', data.message, true);
     }
