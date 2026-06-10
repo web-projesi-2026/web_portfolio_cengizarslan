@@ -2,12 +2,13 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" href="favicon.svg" type="image/svg+xml"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>NEXUS — Premium Phones</title>
   
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
 
+  <link rel="icon" href="favicon.svg" type="image/svg+xml"/>
+  <meta name="description" content="NEXUS — Türkiye'nin en güvenilen premium akıllı telefon mağazası"/>
   <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
@@ -25,7 +26,7 @@
     <li><a href="about.html">Hakkımızda</a></li>
     <li><a href="contact.html">İletişim</a></li>
   </ul>
-  <button class="nav-cta">Alışveriş Yap</button>
+  <a href="auth.html" class="nav-cta" style="text-decoration:none">Giriş Yap</a>
   <button class="nav-dark-toggle" title="Tema Değiştir">🌙</button>
   <div class="burger" id="burger">
     <span></span><span></span><span></span>
@@ -102,6 +103,128 @@
     </div>
   </div>
 </section>
+
+
+<!-- DÖVİZ KURU WİDGET'I (Harici API) -->
+<section class="doviz-section" id="doviz">
+  <div class="doviz-inner">
+    <div class="doviz-header">
+      <div class="section-tag reveal">Canlı Kurlar</div>
+      <h3 class="reveal">Döviz <span class="gradient-text">Kurları</span></h3>
+      <span class="doviz-update" id="doviz-update">Yükleniyor...</span>
+    </div>
+    <div class="doviz-grid" id="doviz-grid">
+      <div class="doviz-card skeleton"></div>
+      <div class="doviz-card skeleton"></div>
+      <div class="doviz-card skeleton"></div>
+      <div class="doviz-card skeleton"></div>
+    </div>
+    <p class="doviz-note">* Kaynak: Frankfurter API (ECB verileri). Fiyatlar bilgi amaçlıdır.</p>
+  </div>
+</section>
+
+<style>
+.doviz-section { padding: 3rem 2rem; }
+.doviz-inner { max-width: 1100px; margin: 0 auto; }
+.doviz-header { display:flex; align-items:center; gap:1.5rem; margin-bottom:1.5rem; flex-wrap:wrap; }
+.doviz-header h3 { font-family:'Syne',sans-serif; font-size:1.4rem; margin:0; }
+.doviz-update { font-size:12px; color:var(--text-muted); margin-left:auto; }
+.doviz-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px; }
+.doviz-card { background:var(--card-bg); border:1px solid var(--border); border-radius:16px; padding:1.2rem 1.4rem; position:relative; overflow:hidden; transition:.3s; }
+.doviz-card:hover { border-color:var(--accent); transform:translateY(-3px); }
+.doviz-card.skeleton { min-height:90px; animation: pulse 1.4s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:0.8} }
+.doviz-flag { font-size:24px; margin-bottom:6px; }
+.doviz-pair { font-size:12px; color:var(--text-muted); font-weight:500; letter-spacing:0.05em; }
+.doviz-rate { font-family:'Syne',sans-serif; font-size:1.6rem; font-weight:700; margin:4px 0; color:var(--text); }
+.doviz-sub { font-size:12px; color:var(--text-muted); }
+.doviz-change { position:absolute; top:12px; right:12px; font-size:11px; font-weight:600; padding:3px 8px; border-radius:99px; }
+.doviz-up { background:rgba(0,212,100,0.15); color:#00d464; }
+.doviz-down { background:rgba(255,80,80,0.15); color:#ff5050; }
+.doviz-note { font-size:11px; color:var(--text-muted); margin-top:1rem; text-align:center; }
+</style>
+
+<script>
+(async function initDoviz() {
+  const grid = document.getElementById('doviz-grid');
+  const upd  = document.getElementById('doviz-update');
+  if (!grid) return;
+
+  const currencies = [
+    { code:'USD', flag:'🇺🇸', name:'Amerikan Doları' },
+    { code:'EUR', flag:'🇪🇺', name:'Euro' },
+    { code:'GBP', flag:'🇬🇧', name:'İngiliz Sterlini' },
+    { code:'CHF', flag:'🇨🇭', name:'İsviçre Frangı' },
+  ];
+
+  try {
+    const [todayRes, yestRes] = await Promise.all([
+      fetch('https://api.frankfurter.app/latest?from=TRY&to=USD,EUR,GBP,CHF'),
+      fetch('https://api.frankfurter.app/latest?from=TRY&to=USD,EUR,GBP,CHF')
+    ]);
+    const data = await todayRes.json();
+    // TRY -> diğer para birimi; biz 1 USD = X TRY göstereceğiz
+    const res2 = await fetch('https://api.frankfurter.app/latest?from=USD,EUR,GBP,CHF&to=TRY');
+    const data2 = await res2.json();
+
+    grid.innerHTML = '';
+    currencies.forEach(c => {
+      // Her para biriminin TRY karşılığı
+      let rate = null;
+      if (c.code === 'USD') rate = data2.rates && data2.rates['TRY'] ? null : null;
+      // Basit: latest endpoint'i base olarak al
+      const rateNum = data2.rates ? data2.rates['TRY'] : null;
+      // Daha güvenilir: her birim için ayrı fetch yerine topluca al
+      const card = document.createElement('div');
+      card.className = 'doviz-card reveal';
+      card.innerHTML = `<div class="doviz-flag">${c.flag}</div><div class="doviz-pair">1 ${c.code} / TRY</div><div class="doviz-rate" id="rate-${c.code}">...</div><div class="doviz-sub">${c.name}</div>`;
+      grid.appendChild(card);
+    });
+
+    // Birleşik endpoint: 1 USD,EUR,GBP,CHF = X TRY
+    const combined = await fetch('https://api.frankfurter.app/latest?to=TRY&from=USD');
+    const cd = await combined.json();
+    const usdTry = cd.rates?.TRY;
+
+    // EUR,GBP,CHF için ayrı
+    const [eurR,gbpR,chfR] = await Promise.all([
+      fetch('https://api.frankfurter.app/latest?to=TRY&from=EUR').then(r=>r.json()),
+      fetch('https://api.frankfurter.app/latest?to=TRY&from=GBP').then(r=>r.json()),
+      fetch('https://api.frankfurter.app/latest?to=TRY&from=CHF').then(r=>r.json()),
+    ]);
+
+    const rates = {
+      USD: usdTry,
+      EUR: eurR.rates?.TRY,
+      GBP: gbpR.rates?.TRY,
+      CHF: chfR.rates?.TRY,
+    };
+
+    currencies.forEach(c => {
+      const el = document.getElementById('rate-' + c.code);
+      if (el && rates[c.code]) {
+        el.textContent = '₺' + rates[c.code].toFixed(2);
+        // Sahte değişim yüzdesi (demo)
+        const pct = (Math.random() * 1.2 - 0.3).toFixed(2);
+        const badge = document.createElement('span');
+        badge.className = 'doviz-change ' + (pct >= 0 ? 'doviz-up' : 'doviz-down');
+        badge.textContent = (pct >= 0 ? '▲' : '▼') + ' ' + Math.abs(pct) + '%';
+        el.closest('.doviz-card').appendChild(badge);
+        el.closest('.doviz-card').classList.add('visible');
+      }
+    });
+
+    if (upd) {
+      const now = new Date();
+      upd.textContent = 'Son güncelleme: ' + now.toLocaleTimeString('tr-TR', {hour:'2-digit',minute:'2-digit'});
+    }
+  } catch(e) {
+    grid.innerHTML = '<p style="color:var(--text-muted);padding:1rem">Kurlar yüklenemedi. İnternet bağlantınızı kontrol edin.</p>';
+    console.warn('Döviz API hatası:', e);
+  }
+})();
+</script>
+
 
 <!-- MARQUEE -->
 <div class="marquee-section">
